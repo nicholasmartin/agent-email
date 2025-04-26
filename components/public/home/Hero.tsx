@@ -226,7 +226,7 @@ export function Hero() {
                   alt="Agent Email AI Character" 
                   width={350} 
                   height={400} 
-                  className="object-contain"
+                  className="w-auto h-auto object-contain"
                   priority
                 />
               </div>
