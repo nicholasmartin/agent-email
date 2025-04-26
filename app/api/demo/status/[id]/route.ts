@@ -3,10 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const jobId = params.id;
+    const jobId = context.params.id;
     
     // Verify form secret for security
     const formSecret = req.headers.get('x-form-secret');
