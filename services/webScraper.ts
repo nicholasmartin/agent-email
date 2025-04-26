@@ -106,27 +106,29 @@ export async function scrapeDomain(domain: string, jobId: string): Promise<boole
       apiKey: process.env.FIRECRAWL_API_KEY!
     });
     
-    // Define schema for extraction using Zod
+    // Define schema for extraction using Zod - exactly matching the Node.js implementation
     const schema = z.object({
       overview: z.string(),
       summary: z.string(),
       company_name: z.string().optional(),
       services: z.array(z.string()).optional(),
       products: z.array(z.string()).optional(),
-      industry: z.string().optional(),
-      values: z.array(z.string()).optional()
+      contact_title: z.string().optional()
     });
     
     console.log(`Starting extraction for domain: ${domain}`);
+    console.log('Calling asyncExtract...');
     
-    // Start the asynchronous extraction process
+    // Start the asynchronous extraction process - exactly matching the Node.js implementation
     const extractJob = await app.asyncExtract(
       [`https://${domain}/`],
       {
-        prompt: "Draft a 200-word max overview of the website. Provide a short paragraph that summarizes the homepage. Extract the company name, industry, list of services, list of products, and company values if available.",
-        schema: schema.shape
+        prompt: "Draft a 200-word max overview of the website. Provide a short paragraph that summarizes the homepage. Extract the company name, a list of services, and a list of products they provide.",
+        schema // Pass the schema directly, not schema.shape
       }
     ) as FirecrawlExtractJob;
+    
+    console.log('asyncExtract call completed successfully');
     
     console.log('Extract job started:', extractJob);
     
