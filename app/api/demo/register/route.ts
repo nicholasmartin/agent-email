@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     // Verify form secret for security
     const formSecret = req.headers.get('x-form-secret');
-    if (formSecret !== process.env.WEBSITE_FORM_SECRET) {
+    if (formSecret !== process.env.NEXT_PUBLIC_WEBSITE_FORM_SECRET) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

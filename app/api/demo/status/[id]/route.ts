@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
+  const { id } = context.params;
   try {
-    const jobId = context.params.id;
+    const jobId = id;
     
     // Verify form secret for security
-    const formSecret = req.headers.get('x-form-secret');
-    if (formSecret !== process.env.WEBSITE_FORM_SECRET) {
+    const formSecret = request.headers.get('x-form-secret');
+    if (formSecret !== process.env.NEXT_PUBLIC_WEBSITE_FORM_SECRET) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
