@@ -1,5 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import FireCrawlApp from '@mendable/firecrawl-js';
+
+// Define types for Firecrawl responses
+interface FirecrawlExtractJob {
+  id?: string;
+  extractionId?: string;
+  status?: string;
+  [key: string]: any;
+}
 
 interface ScrapeResult {
   companyName?: string;
@@ -21,6 +30,58 @@ function formatDomainAsCompanyName(domain: string): string {
   return name;
 }
 
+/**
+ * Wait for FireCrawl extraction to complete
+ * @param app - FireCrawl app instance
+ * @param extractionId - ID of the extraction job
+ * @param timeoutSeconds - Maximum time to wait in seconds
+ * @returns - Extraction result or null if timed out
+ */
+async function waitForExtraction(app: FireCrawlApp, extractionId: string, timeoutSeconds = 120): Promise<any> {
+  const startTime = Date.now();
+  const timeoutMs = timeoutSeconds * 1000;
+  
+  // Check status every 5 seconds
+  const checkInterval = 5000;
+  
+  while (Date.now() - startTime < timeoutMs) {
+    try {
+      console.log(`Checking extraction status for ID: ${extractionId}`);
+      
+      const status = await app.getExtractStatus(extractionId);
+      console.log('Status response:', status);
+      
+      // Handle different possible response formats
+      if (status && status.status === 'completed') {
+        console.log('Extraction completed successfully');
+        
+        // Check different result formats
+        let result;
+        if (status.result) {
+          result = status.result;
+        } else if (status.data) {
+          result = status.data;
+        } else if (status.results && status.results.length > 0) {
+          result = status.results[0].data;
+        }
+        
+        console.log('Extraction result:', result);
+        return result;
+      } else if (status && status.status === 'failed') {
+        throw new Error(`Extraction failed: ${status.error || 'Unknown error'}`);
+      }
+      
+      // Wait before checking again
+      await new Promise(resolve => setTimeout(resolve, checkInterval));
+    } catch (error: any) {
+      console.error('Error checking extraction status:', error);
+      throw error;
+    }
+  }
+  
+  throw new Error(`Extraction timed out after ${timeoutSeconds} seconds`);
+}
+
 export async function scrapeDomain(domain: string, jobId: string): Promise<boolean> {
   try {
     console.log(`Scraping domain: ${domain} for job: ${jobId}`);
@@ -40,6 +101,11 @@ export async function scrapeDomain(domain: string, jobId: string): Promise<boole
       })
       .eq('id', jobId);
     
+    // Initialize FireCrawl SDK
+    const app = new FireCrawlApp({
+      apiKey: process.env.FIRECRAWL_API_KEY!
+    });
+    
     // Define schema for extraction using Zod
     const schema = z.object({
       overview: z.string(),
@@ -51,55 +117,36 @@ export async function scrapeDomain(domain: string, jobId: string): Promise<boole
       values: z.array(z.string()).optional()
     });
     
-    // Call Firecrawl Extract API
-    const response = await fetch('https://api.firecrawl.dev/extract', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.FIRECRAWL_API_KEY}`
-      },
-      body: JSON.stringify({
-        urls: [`https://${domain}/`],
+    console.log(`Starting extraction for domain: ${domain}`);
+    
+    // Start the asynchronous extraction process
+    const extractJob = await app.asyncExtract(
+      [`https://${domain}/`],
+      {
         prompt: "Draft a 200-word max overview of the website. Provide a short paragraph that summarizes the homepage. Extract the company name, industry, list of services, list of products, and company values if available.",
         schema: schema.shape
-      })
-    });
-    
-    // Handle non-JSON responses safely
-    let responseData;
-    const contentType = response.headers.get('content-type');
-    
-    if (!response.ok) {
-      let errorMessage;
-      try {
-        if (contentType && contentType.includes('application/json')) {
-          const errorData = await response.json();
-          errorMessage = errorData.message || response.statusText;
-        } else {
-          // If response is not JSON, get text content instead
-          const errorText = await response.text();
-          errorMessage = `Non-JSON response: ${errorText.substring(0, 100)}...`;
-        }
-      } catch (e: any) {
-        errorMessage = `Failed to parse error response: ${response.statusText}`;
       }
-      throw new Error(`Firecrawl API error: ${errorMessage}`);
+    ) as FirecrawlExtractJob;
+    
+    console.log('Extract job started:', extractJob);
+    
+    // Get the extraction ID from the response
+    const extractionId = extractJob?.id || extractJob?.extractionId;
+    if (!extractionId) {
+      throw new Error('No extraction ID returned from Firecrawl');
     }
     
-    // Safely parse JSON response
-    try {
-      if (contentType && contentType.includes('application/json')) {
-        responseData = await response.json();
-      } else {
-        const textResponse = await response.text();
-        throw new Error(`Unexpected content type: ${contentType}, response: ${textResponse.substring(0, 100)}...`);
-      }
-    } catch (e: any) {
-      throw new Error(`Failed to parse JSON response: ${e.message || 'Unknown error'}`);
-    }
+    console.log(`Waiting for extraction to complete for ID: ${extractionId}`);
     
-    // Extract the data from the response
-    const data = responseData.data || responseData;
+    // Wait for the extraction to complete
+    const extractionResult = await waitForExtraction(app, extractionId);
+    
+    // Process the extraction result
+    const data = extractionResult?.data || extractionResult;
+    
+    if (!data) {
+      throw new Error('No data returned from Firecrawl extraction');
+    }
     
     // Process and structure the scraped data
     const scrapeResult: ScrapeResult = {
