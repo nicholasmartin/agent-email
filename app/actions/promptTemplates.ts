@@ -45,20 +45,26 @@ export async function getPromptTemplates() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  // Get the user's company
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("company_id")
-    .eq("id", user.id)
+  // Get the user's company directly from the companies table
+  const { data: company, error: companyError } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("active", true)
     .single();
 
-  if (!profile?.company_id) return [];
+  if (companyError) {
+    console.error("Error fetching company:", companyError);
+    return [];
+  }
+
+  if (!company?.id) return [];
 
   // Get the company's prompt templates
   const { data: promptTemplates, error } = await supabase
     .from("prompt_templates")
     .select("*")
-    .eq("company_id", profile.company_id)
+    .eq("company_id", company.id)
     .eq("active", true)
     .order("created_at", { ascending: false });
 
@@ -87,22 +93,23 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
       return { error: "Not authenticated" };
     }
 
-    // Get the user's company
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("company_id")
-      .eq("id", user.id)
+    // Get the user's company directly from the companies table
+    const { data: company, error: companyError } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("active", true)
       .single();
       
-    if (profileError) {
-      console.error("Error fetching profile:", profileError);
-      return { error: "Failed to fetch user profile" };
+    if (companyError) {
+      console.error("Error fetching company:", companyError);
+      return { error: "Failed to fetch user company" };
     }
     
-    console.log("User profile:", profile);
+    console.log("User company:", company);
 
-    if (!profile?.company_id) {
-      console.log("No company_id found in profile");
+    if (!company?.id) {
+      console.log("No company found for user");
       return { error: "Company not found" };
     }
 
@@ -119,7 +126,7 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
     const { count, error: countError } = await supabase
       .from("prompt_templates")
       .select("*", { count: "exact", head: true })
-      .eq("company_id", profile.company_id)
+      .eq("company_id", company.id)
       .eq("active", true);
       
     if (countError) {
@@ -132,7 +139,7 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
 
     // Create the prompt template
     console.log("Inserting new template with data:", {
-      company_id: profile.company_id,
+      company_id: company.id,
       name: formData.name,
       template: formData.template,
       tone: formData.tone,
@@ -144,7 +151,7 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
     const { data, error } = await supabase
       .from("prompt_templates")
       .insert({
-        company_id: profile.company_id,
+        company_id: company.id,
         name: formData.name,
         template: formData.template,
         tone: formData.tone,
@@ -256,14 +263,20 @@ export async function setDefaultPromptTemplate(id: string) {
     return { error: "Not authenticated" };
   }
 
-  // Get the user's company
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("company_id")
-    .eq("id", user.id)
+  // Get the user's company directly from the companies table
+  const { data: company, error: companyError } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("active", true)
     .single();
 
-  if (!profile?.company_id) {
+  if (companyError) {
+    console.error("Error fetching company:", companyError);
+    return { error: "Failed to fetch user company" };
+  }
+
+  if (!company?.id) {
     return { error: "Company not found" };
   }
 
@@ -271,7 +284,7 @@ export async function setDefaultPromptTemplate(id: string) {
   const { error: updateError } = await supabase
     .from("prompt_templates")
     .update({ is_default: false, updated_at: new Date().toISOString() })
-    .eq("company_id", profile.company_id);
+    .eq("company_id", company.id);
 
   if (updateError) {
     console.error("Error updating prompt templates:", updateError);
