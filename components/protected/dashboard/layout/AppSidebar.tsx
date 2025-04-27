@@ -43,7 +43,10 @@ const navItems: NavItem[] = [
   {
     icon: <TableIcon />,
     name: "Settings",
-    path: "/dashboard/settings",
+    subItems: [
+      { name: "Account", path: "/dashboard/settings/account" },
+      { name: "API", path: "/dashboard/settings/api" }
+    ],
   },
   {
     icon: <AlertIcon />,
