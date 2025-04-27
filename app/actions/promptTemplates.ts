@@ -72,45 +72,66 @@ export async function getPromptTemplates() {
 
 // Create a new prompt template
 export async function createPromptTemplate(formData: PromptTemplateFormData) {
-  const supabase = await createClient();
+  console.log("Starting createPromptTemplate with formData:", formData);
   
-  // Get the current user
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  // Get the user's company
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("company_id")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.company_id) {
-    return { error: "Company not found" };
-  }
-
-  // Validate the form data
   try {
-    promptTemplateSchema.parse(formData);
-  } catch (error) {
-    return { error: "Invalid form data" };
-  }
+    const supabase = await createClient();
+    console.log("Supabase client created");
+    
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log("Current user:", user?.id);
+    
+    if (!user) {
+      console.log("No authenticated user found");
+      return { error: "Not authenticated" };
+    }
 
-  // Check if this is the first prompt template for the company
-  const { count } = await supabase
-    .from("prompt_templates")
-    .select("*", { count: "exact", head: true })
-    .eq("company_id", profile.company_id)
-    .eq("active", true);
+    // Get the user's company
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("company_id")
+      .eq("id", user.id)
+      .single();
+      
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+      return { error: "Failed to fetch user profile" };
+    }
+    
+    console.log("User profile:", profile);
 
-  const isDefault = count === 0;
+    if (!profile?.company_id) {
+      console.log("No company_id found in profile");
+      return { error: "Company not found" };
+    }
 
-  // Create the prompt template
-  const { data, error } = await supabase
-    .from("prompt_templates")
-    .insert({
+    // Validate the form data
+    try {
+      promptTemplateSchema.parse(formData);
+      console.log("Form data validated successfully");
+    } catch (error) {
+      console.error("Form validation error:", error);
+      return { error: "Invalid form data" };
+    }
+
+    // Check if this is the first prompt template for the company
+    const { count, error: countError } = await supabase
+      .from("prompt_templates")
+      .select("*", { count: "exact", head: true })
+      .eq("company_id", profile.company_id)
+      .eq("active", true);
+      
+    if (countError) {
+      console.error("Error counting templates:", countError);
+      return { error: "Failed to check existing templates" };
+    }
+    
+    console.log("Current template count:", count);
+    const isDefault = count === 0;
+
+    // Create the prompt template
+    console.log("Inserting new template with data:", {
       company_id: profile.company_id,
       name: formData.name,
       template: formData.template,
@@ -118,17 +139,34 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
       style: formData.style,
       max_length: formData.max_length,
       is_default: isDefault,
-    })
-    .select()
-    .single();
+    });
+    
+    const { data, error } = await supabase
+      .from("prompt_templates")
+      .insert({
+        company_id: profile.company_id,
+        name: formData.name,
+        template: formData.template,
+        tone: formData.tone,
+        style: formData.style,
+        max_length: formData.max_length,
+        is_default: isDefault,
+      })
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error creating prompt template:", error);
-    return { error: "Failed to create prompt template" };
+    if (error) {
+      console.error("Error creating prompt template:", error);
+      return { error: "Failed to create prompt template: " + error.message };
+    }
+
+    console.log("Template created successfully:", data);
+    revalidatePath("/dashboard/projects");
+    return { data };
+  } catch (unexpectedError) {
+    console.error("Unexpected error in createPromptTemplate:", unexpectedError);
+    return { error: "An unexpected error occurred: " + (unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError)) };
   }
-
-  revalidatePath("/dashboard/projects");
-  return { data };
 }
 
 // Update an existing prompt template

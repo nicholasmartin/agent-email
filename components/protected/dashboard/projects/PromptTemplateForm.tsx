@@ -72,6 +72,7 @@ export default function PromptTemplateForm({ initialData, onSuccess }: PromptTem
         // Update existing template
         const result = await updatePromptTemplate(initialData.id, data);
         if (result.error) {
+          console.error("Error updating template:", result.error);
           toast.error(result.error);
         } else {
           toast.success("Prompt template updated successfully");
@@ -79,17 +80,27 @@ export default function PromptTemplateForm({ initialData, onSuccess }: PromptTem
         }
       } else {
         // Create new template
-        const result = await createPromptTemplate(data);
-        if (result.error) {
-          toast.error(result.error);
-        } else {
-          toast.success("Prompt template created successfully");
-          reset();
-          onSuccess?.();
+        console.log("Submitting form data:", data);
+        try {
+          const result = await createPromptTemplate(data);
+          console.log("Create template result:", result);
+          
+          if (result.error) {
+            console.error("Error from server:", result.error);
+            toast.error(result.error);
+          } else {
+            toast.success("Prompt template created successfully");
+            reset();
+            onSuccess?.();
+          }
+        } catch (submitError) {
+          console.error("Error during createPromptTemplate call:", submitError);
+          toast.error("Error creating template: " + (submitError instanceof Error ? submitError.message : String(submitError)));
         }
       }
     } catch (error) {
-      toast.error("Failed to save prompt template");
+      console.error("Unexpected error in form submission:", error);
+      toast.error("Failed to save prompt template: " + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsSubmitting(false);
     }
