@@ -91,7 +91,14 @@ export async function generateEmail(jobId: string): Promise<string | null> {
           content: `You are an expert email copywriter. Your task is to write a personalized email based on the provided information. 
           Use a ${promptTemplate.tone || 'professional'} tone and keep the email ${promptTemplate.style || 'concise'}.
           Maximum length: ${promptTemplate.max_length || 400} characters.
-          Format your response as a JSON object with 'subject' and 'body' fields.`
+          
+          IMPORTANT FORMATTING INSTRUCTIONS:
+          1. DO NOT include any greeting (like "Hi [Name]") at the beginning
+          2. DO NOT include any signature or closing (like "Best regards" or "Sincerely")
+          3. ONLY write the main body content of the email
+          4. Format your response as a JSON object with 'subject' and 'body' fields
+          
+          The greeting and signature will be added separately.`
         },
         {
           role: "user",
