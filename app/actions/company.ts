@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export interface CompanyData {
+  id: string;
   name: string;
   slug: string;
   website?: string;
