@@ -156,7 +156,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         jobId: job.id,
-        emailDraft: result.emailDraft,
+        emailDraft: result.emailDraft, // Keep for backward compatibility
+        emailSubject: result.emailSubject,
+        emailBody: result.emailBody,
         message: 'Lead processed successfully'
       });
     } else {

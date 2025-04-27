@@ -1,6 +1,6 @@
 import { isBusinessDomain, extractDomainFromEmail } from '@/utils/domainChecker';
 import { scrapeDomain } from '@/services/webScraper';
-import { generateEmail } from '@/services/emailGenerator';
+import { generateEmail, EmailResult } from '@/services/emailGenerator';
 import { sendEmail } from '@/services/emailSender';
 import { createClient } from '@supabase/supabase-js';
 
@@ -36,8 +36,8 @@ export async function processJob(jobId: string) {
     
     // 3. Generate email
     await updateJobStatus(supabase, jobId, 'generating');
-    const emailDraft = await generateEmail(jobId);
-    if (!emailDraft) {
+    const emailResult = await generateEmail(jobId);
+    if (!emailResult) {
       await updateJobStatus(supabase, jobId, 'failed', 'Failed to generate email');
       return { status: 'error', message: 'Failed to generate email' };
     }
@@ -61,7 +61,10 @@ export async function processJob(jobId: string) {
       status: 'success', 
       message: 'Job processed successfully',
       jobId,
-      emailDraft: job.metadata?.source !== 'demo' ? emailDraft : undefined 
+      // For client API requests, return complete email data
+      emailDraft: job.metadata?.source !== 'demo' ? emailResult.body : undefined, // Keep for backward compatibility
+      emailSubject: job.metadata?.source !== 'demo' ? emailResult.subject : undefined,
+      emailBody: job.metadata?.source !== 'demo' ? emailResult.body : undefined
     };
   } catch (error: any) {
     // Handle errors

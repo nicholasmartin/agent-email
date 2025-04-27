@@ -6,7 +6,13 @@ interface EmailResponse {
   body: string;
 }
 
-export async function generateEmail(jobId: string): Promise<string | null> {
+// Define the return type for the generateEmail function
+export interface EmailResult {
+  subject: string;
+  body: string;
+}
+
+export async function generateEmail(jobId: string): Promise<EmailResult | null> {
   try {
     console.log(`Generating email for job: ${jobId}`);
     
@@ -151,7 +157,11 @@ export async function generateEmail(jobId: string): Promise<string | null> {
       return null;
     }
     
-    return emailResponse.body;
+    // Return both subject and body for better API responses
+    return {
+      subject: emailResponse.subject,
+      body: emailResponse.body
+    };
   } catch (error: any) {
     console.error(`Error generating email for job ${jobId}:`, error);
     
