@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { isBusinessDomain, extractDomainFromEmail } from '@/utils/domainChecker';
 import { processJob } from '@/services/jobProcessor';
 
+import { verifyApiKey } from '@/utils/apiKeyGenerator';
+
 // Helper function to validate API key
 async function validateApiKey(apiKey: string) {
   const supabase = createClient(
@@ -10,23 +12,60 @@ async function validateApiKey(apiKey: string) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
-  // Get key prefix (first 8 characters)
-  const keyPrefix = apiKey.substring(0, 8);
+  // Extract the key prefix from the API key
+  // Format is expected to be: prefix_base64string
+  console.log('Validating API key:', apiKey);
+  
+  const prefixParts = apiKey.split('_');
+  console.log('Prefix parts:', prefixParts);
+  
+  if (prefixParts.length < 2) {
+    console.log('Invalid key format: insufficient parts');
+    return { valid: false };
+  }
+  
+  const keyPrefix = prefixParts[0] + '_' + prefixParts[1];
+  console.log('Extracted key prefix:', keyPrefix);
   
   // Find the API key in the database
-  const { data: apiKeyData } = await supabase
+  const { data: apiKeyData, error: apiKeyError } = await supabase
     .from('api_keys')
     .select('*, companies:company_id(*)')
     .eq('key_prefix', keyPrefix)
     .eq('active', true)
     .single();
   
-  if (!apiKeyData) {
+  if (apiKeyError) {
+    console.log('Database error when fetching API key:', apiKeyError);
     return { valid: false };
   }
   
-  // TODO: In a production environment, we would hash the provided API key
-  // and compare it with the stored hash for proper security
+  if (!apiKeyData) {
+    console.log('No API key found with prefix:', keyPrefix);
+    return { valid: false };
+  }
+  
+  console.log('Found API key in database:', {
+    id: apiKeyData.id,
+    prefix: apiKeyData.key_prefix,
+    companyId: apiKeyData.company_id
+  });
+  
+  // Verify the API key by comparing the hash
+  console.log('Verifying API key hash...');
+  
+  try {
+    const isValid = verifyApiKey(apiKey, apiKeyData.key_hash, apiKeyData.key_salt);
+    console.log('Hash verification result:', isValid);
+    
+    if (!isValid) {
+      console.log('Hash verification failed');
+      return { valid: false };
+    }
+  } catch (error) {
+    console.error('Error during hash verification:', error);
+    return { valid: false };
+  }
   
   return { 
     valid: true, 
