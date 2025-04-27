@@ -103,7 +103,11 @@ export async function createPromptTemplate(formData: PromptTemplateFormData) {
       
     if (companyError) {
       console.error("Error fetching company:", companyError);
-      return { error: "Failed to fetch user company" };
+      // Check if the error is related to the table not existing
+      if (companyError.code === "42P01") {
+        return { error: "The prompt_templates table does not exist" };
+      }
+      return { error: "Failed to fetch user company: " + companyError.message };
     }
     
     console.log("User company:", company);
