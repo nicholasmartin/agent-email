@@ -27,7 +27,7 @@ export async function sendEmail(jobId: string): Promise<boolean> {
     
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_SENDER_EMAIL || 'onboarding@resend.dev',
+      from: `"${process.env.RESEND_SENDER_NAME || job.companies.name}" <${process.env.RESEND_SENDER_EMAIL || 'onboarding@resend.dev'}>`,
       to: job.email,
       subject: job.email_subject || `${job.companies.name}: Personalized Follow-up`,
       html: `
