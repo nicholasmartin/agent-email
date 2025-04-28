@@ -3,7 +3,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "Agent Email - Personalized Welcome Emails for B2B and SaaS Companies",
+  title: "Agent Email - Personalized Welcome Emails for B2B and SaaS",
   description: "Generate personalized and relevant welcome emails to trials and opt-ins using AI.",
 };
 
