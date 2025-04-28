@@ -120,7 +120,7 @@ export function Pricing() {
               "Updates as we build them"
             ]}
             cta={{ text: "Get Started", href: "/signup" }}
-            popular={true}
+            
           />
           <PricingTier
             name="Wildly Unnecessary"

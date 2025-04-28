@@ -51,30 +51,43 @@ export function FAQ() {
           </div>
         </div>
         <div className="mx-auto max-w-3xl py-12">
-          <Accordion 
-            items={[
-              {
-                question: "How does the 14-day trial work?",
-                answer: "Our 14-day trial gives you full access to all features of your chosen plan. No credit card is required to start, and you can cancel anytime during the trial period with no obligation."
-              },
-              {
-                question: "Can I change plans later?",
-                answer: "Yes, you can upgrade or downgrade your plan at any time. If you upgrade, the new features will be available immediately. If you downgrade, the changes will take effect at the start of your next billing cycle."
-              },
-              {
-                question: "Is there a setup fee?",
-                answer: "No, there are no setup fees for any of our plans. You only pay the monthly subscription fee for your chosen plan."
-              },
-              {
-                question: "What kind of support is included?",
-                answer: "All plans include access to our help center and email support. The Professional plan includes priority support with faster response times, while Enterprise customers get a dedicated account manager."
-              },
-              {
-                question: "Do you offer discounts for non-profits or educational institutions?",
-                answer: "Yes, we offer special pricing for non-profit organizations and educational institutions. Please contact our sales team for more information."
-              }
-            ]}
-          />
+        <Accordion 
+  items={[
+    {
+      question: "How does Agent Email work?",
+      answer: "Agent Email automatically scrapes a lead's business website, analyzes their company information, and generates a personalized email using AI. You can either receive the email directly via our API or have it delivered to the lead's inbox."
+    },
+    {
+      question: "Is any coding required to use Agent Email?",
+      answer: "For API integration, minimal technical setup is needed to send your leads to our endpoint and receive personalized emails back. We are looking into integrating with providers like Make, n8n and Zapier to make it even easier."
+    },
+    {
+      question: "Can I customize the email templates?",
+      answer: "Yes! You can create your own prompt templates to control the tone, style, and structure of the AI-generated emails. Each company account can manage multiple templates."
+    },
+    {
+      question: "What happens if website scraping fails?",
+      answer: "If we cannot gather enough information from a lead's website, the job will fail gracefully, and you'll be notified. You won't be charged for failed scrapes, and we recommend manually reviewing those leads."
+    },
+    {
+      question: "How secure is my data?",
+      answer: "We take security seriously. All API requests require secure API keys, and lead information is encrypted at rest and in transit. We never share your data with third parties."
+    },
+    {
+      question: "What are the usage limits during the free beta?",
+      answer: "The beta period includes up to 100 processed leads. If you need a higher limit during your trial, please contact our team to discuss your needs."
+    },
+    {
+      question: "Can I send emails from my own domain?",
+      answer: "Yes, in future releases you’ll be able to connect your own SMTP settings to send branded emails directly from your company’s email address."
+    },
+    {
+      question: "How do I monitor my API usage?",
+      answer: "You can view your usage stats, job history, and email delivery reports through your Agent Email dashboard. API usage is also available via API endpoints if you prefer automation."
+    }
+  ]}
+/>
+
         </div>
       </div>
     </section>

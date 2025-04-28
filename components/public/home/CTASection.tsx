@@ -45,8 +45,7 @@ export function CTASection() {
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Button href="/signup">Start Your Free Trial</Button>
-            <Button href="/contact" variant="outline">Contact Sales</Button>
+            <Button href="/signup" variant="outline">Register For Free</Button>
           </div>
         </div>
       </div>

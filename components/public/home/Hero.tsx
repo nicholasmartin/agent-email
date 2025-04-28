@@ -144,8 +144,8 @@ export function Hero() {
       <div className="container px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="flex flex-col space-y-6">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-              The AI Welcome Email <span className="text-primary">Specialist</span> for SaaS Businesses
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-yellow-600">
+              The AI Welcome Email <span className="text-primary">Specialist</span> for B2B & SaaS Businesses
             </h1>
             <p className="text-xl text-muted-foreground">
               Transform business email signups into engaged customers with personalized welcome emails that feel hand-crafted.
