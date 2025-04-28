@@ -41,7 +41,7 @@ export function CTASection() {
               Ready to Get Started?
             </h2>
             <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Join thousands of businesses already using SaaSMatrix to streamline their operations.
+              Join thousands of businesses already using Agent Email to streamline their operations.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">

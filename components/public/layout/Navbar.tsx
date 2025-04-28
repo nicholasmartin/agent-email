@@ -56,21 +56,35 @@ export function Navbar({ user }: NavbarProps) {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2">
-            <svg 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="h-6 w-6 text-primary"
-            >
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-              <line x1="9" y1="9" x2="9.01" y2="9"/>
-              <line x1="15" y1="9" x2="15.01" y2="9"/>
-            </svg>
-            <span className="font-bold">SaaSMatrix</span>
+            
+          <svg 
+  viewBox="0 0 24 24" 
+  fill="none" 
+  stroke="currentColor" 
+  stroke-width="2" 
+  stroke-linecap="round" 
+  stroke-linejoin="round" 
+  className="h-6 w-6 text-primary"
+>
+  <circle cx="12" cy="12" r="10" />
+  
+  
+  <rect x="6.5" y="8" width="5" height="3.5" rx="1" fill="currentColor" stroke="currentColor" />
+
+  
+  <rect x="12.5" y="8" width="5" height="3.5" rx="1" fill="currentColor" stroke="currentColor" />
+
+ 
+  <line x1="11.5" y1="9.75" x2="12.5" y2="9.75" stroke="currentColor" />
+
+
+  <line x1="6.5" y1="9" x2="5" y2="8" stroke="currentColor" />
+  <line x1="17.5" y1="9" x2="19" y2="8" stroke="currentColor" />
+</svg>
+
+
+            
+            <span className="font-bold">Agent Email</span>
           </Link>
         </div>
         <nav className="hidden md:flex gap-6">

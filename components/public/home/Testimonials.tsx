@@ -32,37 +32,42 @@ const TestimonialCard = ({ quote, author, role, company }: TestimonialCardProps)
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="py-16 md:py-24 bg-muted/30">
+    <section id="testimonials" className="py-16 md:py-24">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-              What Our Customers Say
+              "Testimonials" <span className="text-yellow-600">(Coming Soon!)</span>
             </h2>
             <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Don't just take our word for it. Here's what our customers have to say about their experience.
+              We're still in early development and don't have real customers yet! In the meantime, enjoy these totally made-up testimonials that we wish we had.
             </p>
           </div>
         </div>
         <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-3">
           <TestimonialCard
-            quote="SaaSMatrix has completely transformed how we manage our customer relationships. Our team saves hours every week with the automation features."
-            author="Jane Cooper"
-            role="CEO"
-            company="Acme Inc."
+            quote="This app is so amazing, my cat started using it and now she's filing her own taxes and investing in cryptocurrency. Game changer!"
+            author="Imaginary McFakerson"
+            role="Fictional User"
+            company="Does Not Exist LLC"
           />
           <TestimonialCard
-            quote="The analytics dashboard gives us insights we never had before. We've been able to increase conversion rates by 45% in just three months."
-            author="John Smith"
-            role="Marketing Director"
-            company="TechCorp"
+            quote="I was skeptical at first, but after using this app for 5 minutes, I grew 3 inches taller and found $20 in my pocket. Coincidence? I think not!"
+            author="Totally Real Person"
+            role="Chief Imagination Officer"
+            company="Fantasy Enterprises"
           />
           <TestimonialCard
-            quote="Implementation was seamless and the support team went above and beyond to ensure we were successful. Highly recommend!"
-            author="Sarah Johnson"
-            role="COO"
-            company="Startify"
+            quote="This app is still in development, but I'm from the future and can confirm it becomes the most downloaded app of 2026. Trust me, I'm definitely a time traveler."
+            author="Dr. Not-Yet-A-Customer"
+            role="Time Travel Consultant"
+            company="Future Feedback Inc."
           />
+        </div>
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-500 italic">
+            * No actual customers were harmed in the making of these testimonials. We're working hard to build something awesome and would love your real feedback soon!
+          </p>
         </div>
       </div>
     </section>

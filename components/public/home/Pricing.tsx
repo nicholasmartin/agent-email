@@ -12,6 +12,7 @@ type PricingTierProps = {
     href: string;
   };
   popular?: boolean;
+  timeframe?: string;
 };
 
 type ButtonProps = {
@@ -43,12 +44,12 @@ const Button = ({ children, variant = 'default', className = '', href, ...props 
   return <button className={classes} {...props}>{children}</button>;
 };
 
-const PricingTier = ({ name, price, description, features, cta, popular = false }: PricingTierProps) => (
-  <div className={`rounded-lg border ${popular ? 'border-primary' : 'border-border'} p-6 shadow-sm relative flex flex-col h-full`}>
+const PricingTier = ({ name, price, description, features, cta, popular = false, timeframe = "/month" }: PricingTierProps) => (
+  <div className={`rounded-lg border ${popular ? 'border-primary' : 'border-border'} p-6 shadow-sm relative flex flex-col h-full ${popular ? 'transform hover:scale-105 transition-transform duration-300' : ''}`}>
     {popular && (
       <div className="absolute -top-3 left-0 right-0 flex justify-center">
         <span className="bg-primary text-primary-foreground text-xs font-semibold py-1 px-3 rounded-full">
-          Most Popular
+          Only Sensible Choice
         </span>
       </div>
     )}
@@ -56,7 +57,7 @@ const PricingTier = ({ name, price, description, features, cta, popular = false 
       <h3 className="text-lg font-bold">{name}</h3>
       <div className="mt-2 flex items-baseline">
         <span className="text-3xl font-bold">${price}</span>
-        <span className="ml-1 text-sm text-muted-foreground">/month</span>
+        <span className="ml-1 text-sm text-muted-foreground">{timeframe}</span>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">{description}</p>
     </div>
@@ -98,54 +99,60 @@ export function Pricing() {
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-              Simple, Transparent Pricing
+              Our "Pricing" <span className="text-primary">(Eventually?)</span>
             </h2>
             <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Choose the plan that's right for your business. All plans include a 14-day free trial.
+              We're in early development, so everything is currently free! But here's what our pricing <em>could</em> look like in an alternate universe where we've lost all sense of proportion:
             </p>
           </div>
         </div>
         <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-3">
           <PricingTier
-            name="Starter"
-            price="29"
-            description="Perfect for small businesses and startups."
+            name="Free During Beta"
+            price="0"
+            timeframe="/forever"
+            description="Yes, actually free. No credit card needed. No hidden fees. No kidding."
             features={[
-              "Up to 5 users",
-              "Basic analytics",
-              "24/7 email support",
-              "2GB storage"
-            ]}
-            cta={{ text: "Get Started", href: "/signup" }}
-          />
-          <PricingTier
-            name="Professional"
-            price="79"
-            description="For growing teams that need more power."
-            features={[
-              "Up to 20 users",
-              "Advanced analytics",
-              "Priority support",
-              "20GB storage",
-              "Custom integrations"
+              "All features included",
+              "Unlimited usage",
+              "Community support",
+              "Our eternal gratitude",
+              "Updates as we build them"
             ]}
             cta={{ text: "Get Started", href: "/signup" }}
             popular={true}
           />
           <PricingTier
-            name="Enterprise"
-            price="199"
-            description="For organizations with complex needs."
+            name="Wildly Unnecessary"
+            price="9,999"
+            description="For those who enjoy lighting money on fire for entertainment purposes."
             features={[
-              "Unlimited users",
-              "Premium analytics",
-              "Dedicated account manager",
-              "100GB storage",
-              "Custom integrations",
-              "SSO authentication"
+              "Exactly the same as free",
+              "A digital high-five",
+              "Your name in a text file",
+              "We'll pronounce your name correctly",
+              "A poem about your generosity"
             ]}
-            cta={{ text: "Contact Sales", href: "/contact" }}
+            cta={{ text: "Probably Don't Click", href: "#" }}
           />
+          <PricingTier
+            name="Comically Expensive"
+            price="1,000,000"
+            timeframe="/lifetime"
+            description="For billionaires who accidentally clicked on our website."
+            features={[
+              "Still identical to free tier",
+              "We'll name a server after you",
+              "A handwritten thank-you note*",
+              "Virtual cake on your birthday",
+              "We'll laugh at your jokes",
+              "* Note may be AI-generated"
+            ]}
+            cta={{ text: "Contact Our Therapist", href: "#" }}
+          />
+        </div>
+        <div className="text-center mt-4 text-sm text-muted-foreground italic">
+          <p>* All joking aside, this app is completely free while in development. We're focused on building something amazing first!</p>
         </div>
       </div>
     </section>
