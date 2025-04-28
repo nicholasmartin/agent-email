@@ -3,8 +3,8 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "SaaS Starter Kit - Launch Projects Faster",
-  description: "Build your SaaS application with this modern dashboard template powered by Next.js and Supabase.",
+  title: "Agent Email - Personalized Welcome Emails for B2B and SaaS Companies",
+  description: "Generate personalized and relevant welcome emails to trials and opt-ins using AI.",
 };
 
 const inter = Inter({
