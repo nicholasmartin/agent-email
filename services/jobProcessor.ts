@@ -52,6 +52,27 @@ export async function processJob(jobId: string) {
         await updateJobStatus(supabase, jobId, 'failed', 'Failed to send email');
         return { status: 'error', message: 'Failed to send email' };
       }
+    } else if (job.metadata?.source === 'client_api' && job.companies?.smtp_enabled) {
+      // For client API flow with SMTP enabled, send email via their SMTP server
+      console.log(`Client API request with SMTP enabled for company: ${job.companies.name}`);
+      await updateJobStatus(supabase, jobId, 'sending');
+      const sendResult = await sendEmail(jobId);
+      
+      if (!sendResult) {
+        await updateJobStatus(supabase, jobId, 'failed', 'Failed to send email via SMTP');
+        return { status: 'error', message: 'Failed to send email via SMTP' };
+      }
+      
+      // For client API with SMTP, we've sent the email, so we should update the return values
+      return { 
+        status: 'success', 
+        message: 'Email sent successfully via SMTP',
+        jobId,
+        emailSent: true,
+        emailDraft: emailResult.body, // Keep for backward compatibility
+        emailSubject: emailResult.subject,
+        emailBody: emailResult.body
+      };
     }
     
     // 5. Mark job as completed
