@@ -5,14 +5,14 @@ require('dotenv').config({ path: '.env.scripts' });
 const axios = require('axios').default;
 
 // Replace these values with your actual API key and endpoint URL
-const API_KEY = 'agemail_776b33db_10BbAOUpabxIdMXZiWcJgPZQ5PXmMcsCFlSOjYNRZY'; // New API key for MagLoft company
+const API_KEY = 'agemail_e30e7e4d_Q0Ph7CFJtxKH54i0nuOm3Urd6roH9OJP96IqkNujCA'; // New API key for MagLoft company
 const API_ENDPOINT = 'https://agent-email.magloft.com/api/client/process-lead';
 
 // Test data
 const testData = {
   firstName: 'Nick',
   lastName: 'Martin',
-  email: 'nick@nickmartin.com' // Use a business email domain
+  email: 'nick+99@nickmartin.com' // Use a business email domain
 };
 
 async function testApiEndpoint() {

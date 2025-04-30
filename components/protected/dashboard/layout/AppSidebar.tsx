@@ -45,7 +45,8 @@ const navItems: NavItem[] = [
     name: "Settings",
     subItems: [
       { name: "Account", path: "/dashboard/settings/account" },
-      { name: "API", path: "/dashboard/settings/api" }
+      { name: "API", path: "/dashboard/settings/api" },
+      { name: "SMTP", path: "/dashboard/settings/smtp", new: true }
     ],
   },
   {
