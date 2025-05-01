@@ -77,6 +77,7 @@ export function Navbar({ user }: NavbarProps) {
           <NavLink href="#testimonials">Testimonials</NavLink>
           <NavLink href="#pricing">Pricing</NavLink>
           <NavLink href="#faq">FAQ</NavLink>
+          <NavLink href="/api">API</NavLink>
         </nav>
         <div className="flex items-center gap-4">
           {user ? (

@@ -151,11 +151,10 @@ export function Hero() {
           <div className="flex flex-col space-y-8">
             <div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">
-                The AI Welcome Email <span className="font-extrabold">Specialist</span> for B2B & SaaS
+                The AI Personalized Email <span className="font-extrabold">Specialist</span> for B2B & SaaS Companies
               </h1>
               <p className="text-xl text-gray-300 max-w-lg">
-                Transform business email signups into engaged customers with personalized welcome emails that feel hand-crafted.
-              </p>
+                Let Agent Email research your leads and send them personalized emails that feel hand-crafted. Submit your business email below to try it out!              </p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-5 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
