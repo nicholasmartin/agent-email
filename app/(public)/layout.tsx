@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/public/layout/Navbar";
 import { Footer } from "@/components/public/layout/Footer";
 import { createClient } from "@/utils/supabase/server";
-import { ThemeProvider } from "@/context/ThemeContext";
 
 export default async function PublicLayout({
   children,
@@ -13,12 +12,10 @@ export default async function PublicLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <ThemeProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navbar user={user} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </div>
-    </ThemeProvider>
+    <div className="min-h-screen flex flex-col bg-gray-900">
+      <Navbar user={user} />
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
   );
 }

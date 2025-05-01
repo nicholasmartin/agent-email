@@ -17,7 +17,7 @@ const Button = ({ children, variant = 'default', className = '', href, type = 'b
   const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
   
   const variants = {
-    default: "bg-primary text-primary-foreground hover:bg-primary/90",
+    default: "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     outline: "border border-input hover:bg-accent hover:text-accent-foreground",
     ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -140,18 +140,25 @@ export function Hero() {
   };
 
   return (
-    <section className="pt-16 pb-16 md:pt-20 md:pb-20 bg-gradient-to-b from-background to-muted/30">
-      <div className="container px-4 md:px-6">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="flex flex-col space-y-6">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-yellow-600">
-              The AI Welcome Email <span className="text-primary">Specialist</span> for B2B & SaaS Businesses
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Transform business email signups into engaged customers with personalized welcome emails that feel hand-crafted.
-            </p>
+    <section className="relative overflow-hidden bg-gray-900 py-20">
+      {/* Background gradient elements */}
+      <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
+      <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      
+      <div className="container px-4 md:px-6 relative z-10">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="flex flex-col space-y-8">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">
+                The AI Welcome Email <span className="font-extrabold">Specialist</span> for B2B & SaaS
+              </h1>
+              <p className="text-xl text-gray-300 max-w-lg">
+                Transform business email signups into engaged customers with personalized welcome emails that feel hand-crafted.
+              </p>
+            </div>
             
-            <form onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded-lg shadow-sm border">
+            <form onSubmit={handleSubmit} className="space-y-5 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <input 
@@ -162,7 +169,7 @@ export function Hero() {
                     required
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border rounded-md border-input bg-background"
+                    className="w-full px-4 py-3 border rounded-lg border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                   />
                 </div>
                 <div>
@@ -174,7 +181,7 @@ export function Hero() {
                     required
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border rounded-md border-input bg-background"
+                    className="w-full px-4 py-3 border rounded-lg border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                   />
                 </div>
               </div>
@@ -187,91 +194,87 @@ export function Hero() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="flex-1 px-3 py-2 border rounded-md border-input bg-background"
+                  className="flex-1 px-4 py-3 border rounded-lg border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                 />
-                <Button type="submit" variant="default" className="uppercase font-bold">
+                <Button type="submit" variant="default" className="uppercase font-bold text-base px-6">
                   Try It Free
                 </Button>
               </div>
               
               {formStatus.message && (
-                <div className={`p-3 rounded-md ${formStatus.type === 'error' ? 'bg-destructive/10 text-destructive' : formStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-muted'}`}>
+                <div className={`p-4 rounded-lg ${formStatus.type === 'error' ? 'bg-red-900/30 text-red-300' : formStatus.type === 'success' ? 'bg-green-900/30 text-green-300' : 'bg-indigo-900/30 text-indigo-300'}`}>
                   {formStatus.message}
                 </div>
               )}
               
               {jobStatus && (
                 <div className="mt-4">
-                  <div className="w-full bg-muted rounded-full h-2.5">
+                  <div className="w-full bg-gray-700 rounded-full h-3">
                     <div 
-                      className="bg-primary h-2.5 rounded-full transition-all duration-500" 
+                      className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500" 
                       style={{ width: `${jobStatus.progress}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm mt-2 text-muted-foreground">{jobStatus.message}</p>
+                  <p className="text-sm mt-2 text-gray-300">{jobStatus.message}</p>
                 </div>
               )}
               
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-400">
                 See the magic for yourself – submit your business email and watch Agent Email craft a personalized welcome message just for you.
               </p>
             </form>
           </div>
           
           <div className="relative hidden md:block">
-            <div className="relative h-[400px] w-full">
+            <div className="relative h-[500px] w-full perspective-1000">
               <div className="absolute inset-0 flex items-center justify-center">
-                <Image 
-                  src="/images/agent-smith.png" 
-                  alt="Agent Email AI Character" 
-                  width={350} 
-                  height={400} 
-                  className="w-auto h-auto object-contain"
-                  priority
-                />
+                <div className="relative w-full max-w-lg">
+                  <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
+                  <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+                  <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+                  <Image 
+                    src="/images/agent-smith.png" 
+                    alt="Agent Email AI Character" 
+                    width={400} 
+                    height={450} 
+                    className="relative z-10 w-auto h-auto object-contain drop-shadow-2xl animate-float"
+                    priority
+                  />
+                </div>
               </div>
             </div>
             
             <style jsx>{`
-              @keyframes float1 {
-                0% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-                100% { transform: translateY(0px); }
+              @keyframes blob {
+                0% { transform: translate(0px, 0px) scale(1); }
+                33% { transform: translate(30px, -50px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+                100% { transform: translate(0px, 0px) scale(1); }
               }
-              @keyframes float2 {
-                0% { transform: translateY(0px); }
-                50% { transform: translateY(10px); }
-                100% { transform: translateY(0px); }
+              .animate-blob {
+                animation: blob 7s infinite;
               }
-              @keyframes float3 {
-                0% { transform: translateX(0px); }
-                50% { transform: translateX(-10px); }
-                100% { transform: translateX(0px); }
+              .animation-delay-2000 {
+                animation-delay: 2s;
               }
-              .float-card-1 {
-                animation: float1 4s ease-in-out infinite;
-              }
-              .float-card-2 {
-                animation: float2 5s ease-in-out infinite;
-              }
-              .float-card-3 {
-                animation: float3 6s ease-in-out infinite;
+              .animation-delay-4000 {
+                animation-delay: 4s;
               }
             `}</style>
             
-            <div className="absolute top-10 right-10 bg-card p-3 rounded-lg shadow-lg border flex items-center space-x-2 float-card-1">
-              <span className="text-primary text-xl">🤖</span>
-              <span>AI-Powered Research</span>
+            <div className="absolute top-10 right-10 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float">
+              <span className="text-2xl">🤖</span>
+              <span className="font-medium text-gray-200">AI-Powered Research</span>
             </div>
             
-            <div className="absolute bottom-20 left-0 bg-card p-3 rounded-lg shadow-lg border flex items-center space-x-2 float-card-2">
-              <span className="text-primary text-xl">✉️</span>
-              <span>Personalized Emails</span>
+            <div className="absolute bottom-20 left-0 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float animation-delay-2000">
+              <span className="text-2xl">✉️</span>
+              <span className="font-medium text-gray-200">Personalized Emails</span>
             </div>
             
-            <div className="absolute bottom-40 right-0 bg-card p-3 rounded-lg shadow-lg border flex items-center space-x-2 float-card-3">
-              <span className="text-primary text-xl">⚙️</span>
-              <span>Automated Workflow</span>
+            <div className="absolute bottom-40 right-0 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float animation-delay-4000">
+              <span className="text-2xl">⚙️</span>
+              <span className="font-medium text-gray-200">Automated Workflow</span>
             </div>
           </div>
         </div>
