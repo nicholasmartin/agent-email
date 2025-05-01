@@ -48,10 +48,10 @@ export function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-8 py-3 rounded-lg shadow-lg">
+            <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-8 py-3 rounded-lg shadow-lg" href="/signup">
               Start Your Free Trial
             </Button>
-            <Button variant="outline" className="border-indigo-400 text-indigo-400 hover:bg-gray-700 px-8 py-3 rounded-lg">
+            <Button variant="outline" className="border-indigo-400 text-indigo-400 hover:bg-gray-700 px-8 py-3 rounded-lg" href="/signup">
               Schedule a Demo
             </Button>
           </div>
