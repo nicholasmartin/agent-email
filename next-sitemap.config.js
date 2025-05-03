@@ -17,8 +17,34 @@ module.exports = {
     '/auth/*', 
     '/api/*',
     '/404',
-    '/500'
+    '/500',
+    '/*.png',
+    '/*.jpg',
+    '/*.jpeg',
+    '/*.svg',
+    '/*.ico'
   ],
+  additionalPaths: async (config) => {
+    const result = [];
+    
+    // Add the homepage
+    result.push({
+      loc: '/',
+      changefreq: 'daily',
+      priority: 1.0,
+      lastmod: new Date().toISOString(),
+    });
+    
+    // Add the API documentation page
+    result.push({
+      loc: '/api',
+      changefreq: 'weekly',
+      priority: 0.8,
+      lastmod: new Date().toISOString(),
+    });
+    
+    return result;
+  },
   generateIndexSitemap: false,
   outDir: 'public',
   changefreq: 'weekly',
