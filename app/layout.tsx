@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 const siteUrl = process.env.SITE_URL || 'https://agent-email.magloft.com';
@@ -71,6 +72,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      {/* Google tag (gtag.js) */}
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-17049338259" />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-17049338259');
+        `}
+      </Script>
       <body className="font-inter">
         <PostHogProvider>
           <SidebarProvider>

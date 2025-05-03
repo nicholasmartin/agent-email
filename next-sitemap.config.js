@@ -41,14 +41,18 @@ module.exports = {
         priority: 0.8,
         lastmod: new Date().toISOString(),
       },
-      // Add any other known routes here
-      // For example, if you create an /ai-email page:
-      // {
-      //   loc: '/ai-email',
-      //   changefreq: 'weekly',
-      //   priority: 0.8,
-      //   lastmod: new Date().toISOString(),
-      // },
+      {
+        loc: '/ai-email-writer',
+        changefreq: 'weekly',
+        priority: 0.8,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/email-personalization',
+        changefreq: 'weekly',
+        priority: 0.8,
+        lastmod: new Date().toISOString(),
+      },
     ];
   },
   generateIndexSitemap: false,

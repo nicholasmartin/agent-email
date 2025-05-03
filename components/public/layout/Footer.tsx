@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-semibold text-gray-100 mb-4">Agent Email</h3>
             <p className="text-gray-400 mb-4 max-w-md">
@@ -36,7 +36,9 @@ export function Footer() {
             <ul className="space-y-3">
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Features</a></li>
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">API</a></li>
+              <li>
+                <Link href="/api" className="text-gray-400 hover:text-indigo-400 transition-colors">API</Link>
+              </li>
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Documentation</a></li>
             </ul>
           </div>
@@ -48,6 +50,22 @@ export function Footer() {
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Blog</a></li>
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Careers</a></li>
               <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-semibold text-gray-200 uppercase mb-4">Articles</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/ai-email-writer" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                  AI Email Writer Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/email-personalization" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                  Email Personalization Tips
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
