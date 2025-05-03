@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /api/
+
+# Host
+Host: https://agentemail.com
+
+# Sitemaps
+Sitemap: https://agentemail.com/sitemap.xml
