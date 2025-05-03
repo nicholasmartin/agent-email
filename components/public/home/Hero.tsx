@@ -93,6 +93,11 @@ export function Hero() {
         jobId: data.jobId
       });
 
+      // Track conversion with Google Ads
+      if (typeof window !== 'undefined' && typeof (window as any).gtag_report_conversion === 'function') {
+        (window as any).gtag_report_conversion();
+      }
+
       // Start polling for job status
       if (data.jobId) {
         pollJobStatus(data.jobId);
