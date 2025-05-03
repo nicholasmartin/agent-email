@@ -1,13 +1,29 @@
 import { Metadata } from "next";
+import { WebPageSchema } from "@/components/schema/WebPage";
 
 export const metadata: Metadata = {
   title: "API Documentation | Agent Email",
   description: "Learn how to integrate Agent Email's API into your applications to generate personalized emails for your leads.",
 };
 
+// Get the site URL from environment variables
+const siteUrl = process.env.SITE_URL || 'https://agent-email.magloft.com';
+
 export default function ApiDocumentationPage() {
   return (
     <div className="container mx-auto py-12 px-4 md:px-6 lg:px-8 text-gray-100">
+      {/* Structured Data */}
+      <WebPageSchema
+        name="API Documentation | Agent Email"
+        description="Learn how to integrate Agent Email's API into your applications to generate personalized emails for your leads."
+        url={`${siteUrl}/api`}
+        datePublished="2025-05-03"
+        dateModified={new Date().toISOString().split('T')[0]}
+        breadcrumb={[
+          { name: 'Home', item: siteUrl },
+          { name: 'API Documentation', item: `${siteUrl}/api` },
+        ]}
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           Agent Email API Documentation

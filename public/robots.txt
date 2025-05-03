@@ -6,7 +6,7 @@ Disallow: /auth/
 Disallow: /api/
 
 # Host
-Host: https://agentemail.com
+Host: https://agent-email.magloft.com
 
 # Sitemaps
-Sitemap: https://agentemail.com/sitemap.xml
+Sitemap: https://agent-email.magloft.com/sitemap.xml
