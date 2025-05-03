@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import { SidebarProvider } from "@/context/SidebarContext";
+import { PostHogProvider } from "@/components/PostHogProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -21,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="font-inter">
-        <SidebarProvider>
-          {children}
-        </SidebarProvider>
+        <PostHogProvider>
+          <SidebarProvider>
+            {children}
+          </SidebarProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
