@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/scripts/get-api-key.js 
+/scripts/test-api.js
 
 # next.js
 /.next/
