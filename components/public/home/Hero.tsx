@@ -145,25 +145,25 @@ export function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gray-900 py-20">
-      {/* Background gradient elements */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
-      <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+    <section className="relative overflow-hidden bg-gray-900 py-12 md:py-20">
+      {/* Background gradient elements - contained within section */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
+      <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-0 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
       
-      <div className="container px-4 md:px-6 relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="container px-4 md:px-6 relative z-10 mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className="flex flex-col space-y-8">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">
                 The AI Personalized Email <span className="font-extrabold">Specialist</span> for B2B & SaaS Companies
               </h1>
               <p className="text-xl text-gray-300 max-w-lg">
                 Let Agent Email research your leads and send them personalized emails that feel hand-crafted. Submit your business email below to try it out!              </p>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-5 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-5 bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <input 
                     type="text" 
@@ -189,7 +189,7 @@ export function Hero() {
                   />
                 </div>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-2">
                 <input 
                   type="email" 
                   id="email" 
@@ -198,9 +198,12 @@ export function Hero() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="flex-1 px-4 py-3 border rounded-lg border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                  className="w-full sm:flex-1 px-4 py-3 border rounded-lg border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                 />
-                <Button type="submit" variant="default" className="uppercase font-bold text-base px-6">
+                <Button 
+                  type="submit" 
+                  variant="default" 
+                  className="whitespace-nowrap min-w-[120px] uppercase font-bold text-base px-3 sm:px-4 md:px-6">
                   Try It Free
                 </Button>
               </div>
@@ -230,12 +233,12 @@ export function Hero() {
           </div>
           
           <div className="relative hidden md:block">
-            <div className="relative h-[500px] w-full perspective-1000">
+            <div className="relative h-[400px] lg:h-[500px] w-full perspective-1000">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative w-full max-w-lg">
-                  <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
-                  <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-                  <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+                  <div className="absolute top-0 left-0 w-72 h-72 bg-purple-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob"></div>
+                  <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+                  <div className="absolute bottom-0 left-20 w-72 h-72 bg-blue-900 rounded-full mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
                   <Image 
                     src="/images/agent-smith.png" 
                     alt="Agent Email AI Character" 
@@ -266,19 +269,19 @@ export function Hero() {
               }
             `}</style>
             
-            <div className="absolute top-10 right-10 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float">
-              <span className="text-2xl">🤖</span>
-              <span className="font-medium text-gray-200">AI-Powered Research</span>
+            <div className="absolute top-10 right-0 bg-gray-800 p-3 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-2 animate-float">
+              <span className="text-xl">🤖</span>
+              <span className="font-medium text-gray-200 text-sm">AI-Powered Research</span>
             </div>
             
-            <div className="absolute bottom-20 left-0 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float animation-delay-2000">
-              <span className="text-2xl">✉️</span>
-              <span className="font-medium text-gray-200">Personalized Emails</span>
+            <div className="absolute bottom-20 left-0 bg-gray-800 p-3 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-2 animate-float animation-delay-2000">
+              <span className="text-xl">✉️</span>
+              <span className="font-medium text-gray-200 text-sm">Personalized Emails</span>
             </div>
             
-            <div className="absolute bottom-40 right-0 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-3 animate-float animation-delay-4000">
-              <span className="text-2xl">⚙️</span>
-              <span className="font-medium text-gray-200">Automated Workflow</span>
+            <div className="absolute bottom-40 right-0 bg-gray-800 p-3 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-2 animate-float animation-delay-4000">
+              <span className="text-xl">⚙️</span>
+              <span className="font-medium text-gray-200 text-sm">Automated Workflow</span>
             </div>
           </div>
         </div>

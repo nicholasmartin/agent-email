@@ -1,11 +1,19 @@
 import { Inter } from "next/font/google";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { PostHogProvider } from "@/components/PostHogProvider";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 
 const siteUrl = process.env.SITE_URL || 'https://agent-email.magloft.com';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -98,7 +106,7 @@ export default function RootLayout({
           }
         `}
       </Script>
-      <body className="font-inter">
+      <body className="font-inter overflow-x-hidden">
         <PostHogProvider>
           <SidebarProvider>
             {children}
