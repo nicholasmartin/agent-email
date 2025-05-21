@@ -9,6 +9,7 @@ interface SMTPConfigFormProps {
     smtp_password: string;
     smtp_from_email: string;
     smtp_from_name: string;
+    smtp_reply_to_email: string;
     smtp_secure: boolean;
   } | null;
   onSubmit: (data: any) => void;
@@ -24,6 +25,7 @@ const SMTPConfigForm: React.FC<SMTPConfigFormProps> = ({ initialData, onSubmit, 
     smtp_password: initialData?.smtp_password || '',
     smtp_from_email: initialData?.smtp_from_email || '',
     smtp_from_name: initialData?.smtp_from_name || '',
+    smtp_reply_to_email: initialData?.smtp_reply_to_email || '',
     smtp_secure: initialData?.smtp_secure === undefined ? true : initialData.smtp_secure,
   });
 
@@ -205,6 +207,27 @@ const SMTPConfigForm: React.FC<SMTPConfigFormProps> = ({ initialData, onSubmit, 
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               />
             </div>
+          </div>
+          
+          <div className="mb-4">
+            <label
+              htmlFor="smtp_reply_to_email"
+              className="mb-2.5 block text-black dark:text-white"
+            >
+              Reply-To Email
+            </label>
+            <input
+              type="email"
+              id="smtp_reply_to_email"
+              name="smtp_reply_to_email"
+              value={formData.smtp_reply_to_email}
+              onChange={handleChange}
+              placeholder="replies@yourdomain.com"
+              className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            />
+            <p className="mt-1 text-xs text-body-color dark:text-bodydark">
+              Optional. If provided, replies to your emails will be sent to this address instead of the From Email.
+            </p>
           </div>
 
           <div className="mb-6">

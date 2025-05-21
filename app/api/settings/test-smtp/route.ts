@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
     const info = await transporter.sendMail({
       from: `"${company.smtp_from_name || company.name}" <${company.smtp_from_email || company.smtp_user}>`,
       to: email,
+      ...(company.smtp_reply_to_email && { replyTo: company.smtp_reply_to_email }),
       subject: 'Agent Email SMTP Test',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

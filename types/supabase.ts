@@ -77,6 +77,15 @@ export type Database = {
           id: string
           name: string
           slug: string
+          smtp_enabled: boolean | null
+          smtp_from_email: string | null
+          smtp_from_name: string | null
+          smtp_host: string | null
+          smtp_password: string | null
+          smtp_port: number | null
+          smtp_reply_to_email: string | null
+          smtp_secure: boolean | null
+          smtp_user: string | null
           updated_at: string | null
           user_id: string | null
           website: string | null
@@ -89,6 +98,15 @@ export type Database = {
           id?: string
           name: string
           slug: string
+          smtp_enabled?: boolean | null
+          smtp_from_email?: string | null
+          smtp_from_name?: string | null
+          smtp_host?: string | null
+          smtp_password?: string | null
+          smtp_port?: number | null
+          smtp_reply_to_email?: string | null
+          smtp_secure?: boolean | null
+          smtp_user?: string | null
           updated_at?: string | null
           user_id?: string | null
           website?: string | null
@@ -101,6 +119,15 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+          smtp_enabled?: boolean | null
+          smtp_from_email?: string | null
+          smtp_from_name?: string | null
+          smtp_host?: string | null
+          smtp_password?: string | null
+          smtp_port?: number | null
+          smtp_reply_to_email?: string | null
+          smtp_secure?: boolean | null
+          smtp_user?: string | null
           updated_at?: string | null
           user_id?: string | null
           website?: string | null
