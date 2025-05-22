@@ -72,6 +72,7 @@ export async function sendEmail(jobId: string): Promise<boolean> {
       const info = await transporter.sendMail({
         from: `"${job.companies.smtp_from_name || job.companies.name}" <${job.companies.smtp_from_email || job.companies.smtp_user}>`,
         to: job.email,
+        ...(job.companies.smtp_reply_to_email && { replyTo: job.companies.smtp_reply_to_email }),
         subject: subject,
         html: htmlContent
       });
@@ -93,6 +94,7 @@ export async function sendEmail(jobId: string): Promise<boolean> {
       const { data, error } = await resend.emails.send({
         from: `"${process.env.RESEND_SENDER_NAME || job.companies.name}" <${process.env.RESEND_SENDER_EMAIL || 'onboarding@resend.dev'}>`,
         to: job.email,
+        ...(job.companies.smtp_reply_to_email && { replyTo: job.companies.smtp_reply_to_email }),
         subject: subject,
         html: htmlContent
       });

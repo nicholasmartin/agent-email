@@ -11,6 +11,7 @@ interface SMTPConfig {
   };
   from: string;
   fromName: string;
+  replyTo?: string;
 }
 
 export async function sendEmailViaSMTP(jobId: string, smtpConfig: SMTPConfig): Promise<boolean> {
@@ -49,6 +50,7 @@ export async function sendEmailViaSMTP(jobId: string, smtpConfig: SMTPConfig): P
     const info = await transporter.sendMail({
       from: `"${smtpConfig.fromName}" <${smtpConfig.from}>`,
       to: job.email,
+      ...(smtpConfig.replyTo && { replyTo: smtpConfig.replyTo }),
       subject: job.email_subject || `${job.companies.name}: Personalized Follow-up`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
