@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
           <h2>SMTP Configuration Test</h2>
           <p>This is a test email from Agent Email to verify your SMTP configuration.</p>
           <p>If you're receiving this email, your SMTP configuration is working correctly!</p>
+          ${company.smtp_signature ? `<div style="margin-top: 20px;">${company.smtp_signature}</div>` : ''}
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
           <p style="color: #666; font-size: 12px;">
             This is an automated test email sent from Agent Email. 

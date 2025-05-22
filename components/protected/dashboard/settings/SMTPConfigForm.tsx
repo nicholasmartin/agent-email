@@ -10,6 +10,7 @@ interface SMTPConfigFormProps {
     smtp_from_email: string;
     smtp_from_name: string;
     smtp_reply_to_email: string;
+    smtp_signature: string;
     smtp_secure: boolean;
   } | null;
   onSubmit: (data: any) => void;
@@ -26,11 +27,12 @@ const SMTPConfigForm: React.FC<SMTPConfigFormProps> = ({ initialData, onSubmit, 
     smtp_from_email: initialData?.smtp_from_email || '',
     smtp_from_name: initialData?.smtp_from_name || '',
     smtp_reply_to_email: initialData?.smtp_reply_to_email || '',
+    smtp_signature: initialData?.smtp_signature || '',
     smtp_secure: initialData?.smtp_secure === undefined ? true : initialData.smtp_secure,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : type === 'number' ? parseInt(value) : value,
@@ -227,6 +229,27 @@ const SMTPConfigForm: React.FC<SMTPConfigFormProps> = ({ initialData, onSubmit, 
             />
             <p className="mt-1 text-xs text-body-color dark:text-bodydark">
               Optional. If provided, replies to your emails will be sent to this address instead of the From Email.
+            </p>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="smtp_signature"
+              className="mb-2.5 block text-black dark:text-white"
+            >
+              Email Signature
+            </label>
+            <textarea
+              id="smtp_signature"
+              name="smtp_signature"
+              value={formData.smtp_signature}
+              onChange={handleChange}
+              placeholder="HTML content to appear at the end of your emails"
+              rows={4}
+              className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            />
+            <p className="mt-1 text-xs text-body-color dark:text-bodydark">
+              Optional. HTML content that will appear at the end of your emails. You can include links and basic formatting.
             </p>
           </div>
 

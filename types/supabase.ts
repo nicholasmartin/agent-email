@@ -85,6 +85,7 @@ export type Database = {
           smtp_port: number | null
           smtp_reply_to_email: string | null
           smtp_secure: boolean | null
+          smtp_signature: string | null
           smtp_user: string | null
           updated_at: string | null
           user_id: string | null

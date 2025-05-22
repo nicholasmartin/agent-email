@@ -25,12 +25,17 @@ export async function sendEmail(jobId: string): Promise<boolean> {
     
     // Prepare email content
     const subject = job.email_subject || `${job.companies.name}: Personalized Follow-up`;
-    const htmlContent = `
+    
+    // Build email content with optional signature
+    let emailBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <p>Hi ${job.first_name},</p>
         <div>${job.email_body || job.email_draft.replace(/\n/g, '<br>')}</div>
+        ${job.companies.smtp_signature ? `<div style="margin-top: 20px;">${job.companies.smtp_signature}</div>` : ''}
       </div>
     `;
+    
+    const htmlContent = emailBody;
     
     let success = false;
     

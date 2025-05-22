@@ -19,6 +19,7 @@ export default function SMTPSettingsPage() {
     smtp_from_email: string;
     smtp_from_name: string;
     smtp_reply_to_email: string;
+    smtp_signature: string;
     smtp_secure: boolean;
   } | null>(null);
 
@@ -68,6 +69,7 @@ export default function SMTPSettingsPage() {
         smtp_from_email: company.smtp_from_email || '',
         smtp_from_name: company.smtp_from_name || '',
         smtp_reply_to_email: company.smtp_reply_to_email || '',
+        smtp_signature: company.smtp_signature || '',
         smtp_secure: company.smtp_secure === undefined ? true : company.smtp_secure,
       });
     } catch (err) {
@@ -101,6 +103,7 @@ export default function SMTPSettingsPage() {
           smtp_from_email: formData.smtp_from_email,
           smtp_from_name: formData.smtp_from_name,
           smtp_reply_to_email: formData.smtp_reply_to_email,
+          smtp_signature: formData.smtp_signature,
           smtp_secure: formData.smtp_secure,
         })
         .eq('id', companyId);
