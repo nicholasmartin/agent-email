@@ -132,10 +132,10 @@ const AnalyticsPage = () => {
   }, [jobs, statusFilter, domainFilter, searchQuery]);
 
   // Get unique domains for domain filter
-  const uniqueDomains = [...new Set(jobs.map(job => job.domain))];
+  const uniqueDomains = Array.from(new Set(jobs.map(job => job.domain)));
 
   // Get unique statuses for status filter
-  const uniqueStatuses = [...new Set(jobs.map(job => job.status))];
+  const uniqueStatuses = Array.from(new Set(jobs.map(job => job.status)));
 
   // Handle job selection for modal
   const handleViewJobDetails = (job: Job) => {
