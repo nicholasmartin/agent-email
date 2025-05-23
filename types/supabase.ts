@@ -207,6 +207,7 @@ export type Database = {
           id: string
           last_name: string | null
           metadata: Json | null
+          processing_lock: string | null
           retry_count: number | null
           scrape_job_id: string | null
           scrape_result: Json | null
@@ -233,6 +234,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           metadata?: Json | null
+          processing_lock?: string | null
           retry_count?: number | null
           scrape_job_id?: string | null
           scrape_result?: Json | null
@@ -259,6 +261,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           metadata?: Json | null
+          processing_lock?: string | null
           retry_count?: number | null
           scrape_job_id?: string | null
           scrape_result?: Json | null

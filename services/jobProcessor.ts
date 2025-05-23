@@ -5,19 +5,76 @@ import { sendEmail } from '@/services/emailSender';
 import { createClient } from '@supabase/supabase-js';
 
 export async function processJob(jobId: string) {
+  console.log(`Starting job processing for job: ${jobId}`);
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
-  // Get job details with related company info
+  // Try to acquire a lock on the job by updating its processing_lock field
+  const now = new Date().toISOString();
+  const { data: lockResult, error: lockError } = await supabase
+    .from('jobs')
+    .update({
+      processing_lock: now,
+      updated_at: now
+    })
+    .match({
+      id: jobId,
+      // Only acquire lock if job is not already being processed or is in a terminal state
+      processing_lock: null,
+      // Only process jobs in these states
+      status: 'pending'
+    })
+    .select()
+    .single();
+  
+  if (lockError || !lockResult) {
+    console.log(`Job ${jobId} is already being processed or is in a terminal state`);
+    
+    // Get the current job state to return appropriate status
+    const { data: job } = await supabase
+      .from('jobs')
+      .select('*, companies:company_id(*)')
+      .eq('id', jobId)
+      .single();
+    
+    if (!job) return { status: 'error', message: 'Job not found' };
+    
+    // If job is already completed, return its data
+    if (job.status === 'sent' || job.status === 'generated' || job.status === 'completed') {
+      console.log(`Job ${jobId} is already in terminal state: ${job.status}`);
+      return {
+        status: 'success',
+        message: `Job already processed (${job.status})`,
+        jobId,
+        emailSent: job.email_sent || false,
+        emailDraft: job.email_draft,
+        emailSubject: job.email_subject,
+        emailBody: job.email_body
+      };
+    }
+    
+    // For other states, return the current status
+    return { status: job.status, message: `Job is in ${job.status} state` };
+  }
+  
+  // We've acquired the lock, now get full job details
   const { data: job } = await supabase
     .from('jobs')
     .select('*, companies:company_id(*)')
     .eq('id', jobId)
     .single();
   
-  if (!job) return { status: 'error', message: 'Job not found' };
+  if (!job) {
+    // Release lock if job not found
+    await supabase
+      .from('jobs')
+      .update({ processing_lock: null })
+      .eq('id', jobId);
+    
+    return { status: 'error', message: 'Job not found' };
+  }
   
   try {
     // 1. Check domain type from metadata or determine it if not present
@@ -103,6 +160,12 @@ export async function processJob(jobId: string) {
     // 5. Mark job as completed
     await updateJobStatus(supabase, jobId, 'completed');
     
+    // Release the lock before returning
+    await supabase
+      .from('jobs')
+      .update({ processing_lock: null })
+      .eq('id', jobId);
+    
     return { 
       status: 'success', 
       message: 'Job processed successfully',
@@ -116,6 +179,13 @@ export async function processJob(jobId: string) {
     // Handle errors
     console.error(`Error processing job ${jobId}:`, error);
     await updateJobStatus(supabase, jobId, 'failed', error.message);
+    
+    // Release the lock even if there's an error
+    await supabase
+      .from('jobs')
+      .update({ processing_lock: null })
+      .eq('id', jobId);
+    
     return { status: 'error', message: error.message };
   }
 }
