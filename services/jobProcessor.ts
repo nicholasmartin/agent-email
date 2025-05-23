@@ -11,72 +11,78 @@ export async function processJob(jobId: string) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
-  // Try to acquire a lock on the job by updating its processing_lock field
-  const now = new Date().toISOString();
-  const { data: lockResult, error: lockError } = await supabase
-    .from('jobs')
-    .update({
-      processing_lock: now,
-      updated_at: now
-    })
-    .match({
-      id: jobId,
-      // Only acquire lock if job is not already being processed or is in a terminal state
-      processing_lock: null,
-      // Only process jobs in these states
-      status: 'pending'
-    })
-    .select()
-    .single();
-  
-  if (lockError || !lockResult) {
-    console.log(`Job ${jobId} is already being processed or is in a terminal state`);
+  try {
+    // First, check the current job status
+    const { data: existingJob, error: jobError } = await supabase
+      .from('jobs')
+      .select('id, status, email_draft, email_subject, email_body, email_sent, processing_lock')
+      .eq('id', jobId)
+      .single();
     
-    // Get the current job state to return appropriate status
-    const { data: job } = await supabase
+    // If job doesn't exist, return error
+    if (jobError || !existingJob) {
+      console.log(`Job ${jobId} not found`);
+      return { status: 'error', message: 'Job not found' };
+    }
+    
+    // If job is already in a terminal state, return early with existing data
+    if (['sent', 'generated', 'completed'].includes(existingJob.status)) {
+      console.log(`Job ${jobId} is already in terminal state: ${existingJob.status}`);
+      return {
+        status: 'success',
+        message: `Job already processed (${existingJob.status})`,
+        jobId,
+        emailSent: existingJob.email_sent || false,
+        emailDraft: existingJob.email_draft,
+        emailSubject: existingJob.email_subject,
+        emailBody: existingJob.email_body
+      };
+    }
+    
+    // If job is already being processed (has a lock), return locked status
+    if (existingJob.processing_lock) {
+      console.log(`Job ${jobId} is already being processed (has lock)`);
+      return { status: 'locked', message: 'Job is currently being processed by another process' };
+    }
+    
+    // Try to acquire a lock on the job
+    const now = new Date().toISOString();
+    const { data: lockResult, error: lockError } = await supabase
+      .from('jobs')
+      .update({
+        processing_lock: now,
+        updated_at: now
+      })
+      .eq('id', jobId)
+      .is('processing_lock', null)
+      .select()
+      .single();
+    
+    // If we couldn't acquire the lock, another process got it first
+    if (lockError || !lockResult) {
+      console.log(`Job ${jobId} lock acquisition failed`);
+      return { status: 'locked', message: 'Failed to acquire processing lock' };
+    }
+    
+    console.log(`Successfully acquired lock for job ${jobId}`);
+    
+    // We've acquired the lock, now get full job details
+    const { data: job, error: fullJobError } = await supabase
       .from('jobs')
       .select('*, companies:company_id(*)')
       .eq('id', jobId)
       .single();
     
-    if (!job) return { status: 'error', message: 'Job not found' };
-    
-    // If job is already completed, return its data
-    if (job.status === 'sent' || job.status === 'generated' || job.status === 'completed') {
-      console.log(`Job ${jobId} is already in terminal state: ${job.status}`);
-      return {
-        status: 'success',
-        message: `Job already processed (${job.status})`,
-        jobId,
-        emailSent: job.email_sent || false,
-        emailDraft: job.email_draft,
-        emailSubject: job.email_subject,
-        emailBody: job.email_body
-      };
+    if (fullJobError || !job) {
+      // Release lock if job not found
+      await supabase
+        .from('jobs')
+        .update({ processing_lock: null })
+        .eq('id', jobId);
+      
+      console.log(`Failed to get full job details for ${jobId}`);
+      return { status: 'error', message: 'Failed to get full job details' };
     }
-    
-    // For other states, return the current status
-    return { status: job.status, message: `Job is in ${job.status} state` };
-  }
-  
-  // We've acquired the lock, now get full job details
-  const { data: job } = await supabase
-    .from('jobs')
-    .select('*, companies:company_id(*)')
-    .eq('id', jobId)
-    .single();
-  
-  if (!job) {
-    // Release lock if job not found
-    await supabase
-      .from('jobs')
-      .update({ processing_lock: null })
-      .eq('id', jobId);
-    
-    return { status: 'error', message: 'Job not found' };
-  }
-  
-  try {
     // 1. Check domain type from metadata or determine it if not present
     let domainType: DomainType;
     
@@ -161,10 +167,15 @@ export async function processJob(jobId: string) {
     await updateJobStatus(supabase, jobId, 'completed');
     
     // Release the lock before returning
-    await supabase
-      .from('jobs')
-      .update({ processing_lock: null })
-      .eq('id', jobId);
+    try {
+      await supabase
+        .from('jobs')
+        .update({ processing_lock: null })
+        .eq('id', jobId);
+      console.log(`Released lock for job ${jobId} after successful processing`);
+    } catch (lockError) {
+      console.error(`Failed to release lock for job ${jobId}:`, lockError);
+    }
     
     return { 
       status: 'success', 
@@ -181,10 +192,15 @@ export async function processJob(jobId: string) {
     await updateJobStatus(supabase, jobId, 'failed', error.message);
     
     // Release the lock even if there's an error
-    await supabase
-      .from('jobs')
-      .update({ processing_lock: null })
-      .eq('id', jobId);
+    try {
+      await supabase
+        .from('jobs')
+        .update({ processing_lock: null })
+        .eq('id', jobId);
+      console.log(`Released lock for job ${jobId} after error`);
+    } catch (lockError) {
+      console.error(`Failed to release lock for job ${jobId}:`, lockError);
+    }
     
     return { status: 'error', message: error.message };
   }
