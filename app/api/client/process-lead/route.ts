@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isBusinessDomain, extractDomainFromEmail } from '@/utils/domainChecker';
+import { getDomainType, extractDomainFromEmail, DomainType } from '@/utils/domainChecker';
 import { processJob } from '@/services/jobProcessor';
 
 import { verifyApiKey } from '@/utils/apiKeyGenerator';
@@ -106,22 +106,60 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Check if email is from a business domain
-    if (!isBusinessDomain(email)) {
-      return NextResponse.json(
-        { error: 'Not a business email domain', businessEmail: false },
-        { status: 200 } // Return 200 but with businessEmail: false
-      );
-    }
-    
-    // Extract domain from email
-    const domain = extractDomainFromEmail(email);
-    
     // Initialize Supabase client
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
+    
+    // Determine domain type
+    const domainType = getDomainType(email);
+    
+    // Create a job record regardless of domain type
+    const jobMetadata = {
+      source: 'client_api',
+      template_id: templateId,
+      domain_type: domainType
+    };
+    
+    // If not a business domain, create a job with skipped status
+    if (domainType !== 'business') {
+      const domain = extractDomainFromEmail(email);
+      const { data: skippedJob, error: skippedError } = await supabase
+        .from('jobs')
+        .insert({
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          domain: domain,
+          company_id: companyId,
+          status: 'skipped',
+          error_message: `${domainType} email domain`,
+          metadata: jobMetadata
+        })
+        .select()
+        .single();
+      
+      if (skippedError) {
+        console.error('Error creating skipped job:', skippedError);
+        return NextResponse.json(
+          { error: 'Failed to create job record' },
+          { status: 500 }
+        );
+      }
+      
+      return NextResponse.json(
+        { 
+          status: 'skipped', 
+          message: `${domainType} email domain`,
+          jobId: skippedJob.id
+        },
+        { status: 200 }
+      );
+    }
+    
+    // Extract domain from email
+    const domain = extractDomainFromEmail(email);
     
     // Create a new job
     const { data: job, error } = await supabase
@@ -133,10 +171,7 @@ export async function POST(req: NextRequest) {
         domain: domain,
         company_id: companyId,
         status: 'pending',
-        metadata: {
-          source: 'client_api',
-          template_id: templateId
-        }
+        metadata: jobMetadata
       })
       .select()
       .single();

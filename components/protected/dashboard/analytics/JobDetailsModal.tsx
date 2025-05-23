@@ -115,6 +115,20 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                 <p className="font-medium text-black dark:text-white">{job.domain}</p>
               </div>
               <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Domain Type</p>
+                <p className="font-medium text-black dark:text-white">
+                  {(job.metadata as any)?.domain_type ? (
+                    <span className={`inline-flex rounded-full py-1 px-3 text-xs font-medium ${
+                      (job.metadata as any)?.domain_type === 'business' ? 'bg-success text-white' :
+                      (job.metadata as any)?.domain_type === 'free' ? 'bg-warning text-white' :
+                      'bg-gray-500 text-white'
+                    }`}>
+                      {(job.metadata as any)?.domain_type}
+                    </span>
+                  ) : 'Not specified'}
+                </p>
+              </div>
+              <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
                 <p className="font-medium text-black dark:text-white">{job.full_name || 'N/A'}</p>
               </div>

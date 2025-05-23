@@ -1,4 +1,4 @@
-import { isBusinessDomain, extractDomainFromEmail } from '@/utils/domainChecker';
+import { isBusinessDomain, getDomainType, extractDomainFromEmail, DomainType } from '@/utils/domainChecker';
 import { scrapeDomain } from '@/services/webScraper';
 import { generateEmail, EmailResult } from '@/services/emailGenerator';
 import { sendEmail } from '@/services/emailSender';
@@ -20,10 +20,34 @@ export async function processJob(jobId: string) {
   if (!job) return { status: 'error', message: 'Job not found' };
   
   try {
-    // 1. Verify business domain
-    if (!isBusinessDomain(job.email)) {
-      await updateJobStatus(supabase, jobId, 'rejected', 'Not a business email domain');
-      return { status: 'rejected', message: 'Not a business email domain' };
+    // 1. Check domain type from metadata or determine it if not present
+    let domainType: DomainType;
+    
+    // Use existing domain type from metadata if available
+    if (job.metadata?.domain_type) {
+      domainType = job.metadata.domain_type as DomainType;
+      console.log(`Using existing domain type from metadata: ${domainType}`);
+    } else {
+      // Determine domain type if not already in metadata
+      domainType = getDomainType(job.email);
+      console.log(`Determined domain type: ${domainType}`);
+      
+      // Only update metadata if domain_type is missing
+      await supabase
+        .from('jobs')
+        .update({
+          metadata: {
+            ...job.metadata,
+            domain_type: domainType
+          }
+        })
+        .eq('id', jobId);
+    }
+    
+    // If not a business domain, skip further processing
+    if (domainType !== 'business') {
+      await updateJobStatus(supabase, jobId, 'skipped', `${domainType} email domain`);
+      return { status: 'skipped', message: `${domainType} email domain` };
     }
     
     // 2. Scrape domain
@@ -43,27 +67,28 @@ export async function processJob(jobId: string) {
     }
     
     // 4. Determine if we need to send the email or just return it
-    if (job.metadata?.source === 'demo') {
-      // For demo flow, send email via Resend
+    let emailSent = false;
+    
+    // For demo flow or client API with SMTP enabled, send email
+    if (job.metadata?.source === 'demo' || (job.metadata?.source === 'client_api' && job.companies?.smtp_enabled)) {
+      const source = job.metadata?.source === 'demo' ? 'demo' : 'client API with SMTP';
+      console.log(`Sending email for ${source} flow for company: ${job.companies.name}`);
+      
       await updateJobStatus(supabase, jobId, 'sending');
       const sendResult = await sendEmail(jobId);
       
       if (!sendResult) {
-        await updateJobStatus(supabase, jobId, 'failed', 'Failed to send email');
-        return { status: 'error', message: 'Failed to send email' };
-      }
-    } else if (job.metadata?.source === 'client_api' && job.companies?.smtp_enabled) {
-      // For client API flow with SMTP enabled, send email via their SMTP server
-      console.log(`Client API request with SMTP enabled for company: ${job.companies.name}`);
-      await updateJobStatus(supabase, jobId, 'sending');
-      const sendResult = await sendEmail(jobId);
-      
-      if (!sendResult) {
-        await updateJobStatus(supabase, jobId, 'failed', 'Failed to send email via SMTP');
-        return { status: 'error', message: 'Failed to send email via SMTP' };
+        await updateJobStatus(supabase, jobId, 'failed', `Failed to send email for ${source}`);
+        return { status: 'error', message: `Failed to send email for ${source}` };
       }
       
-      // For client API with SMTP, we've sent the email, so we should update the return values
+      emailSent = true;
+    }
+    
+    // For client API with SMTP where email was sent, return early with success
+    if (job.metadata?.source === 'client_api' && job.companies?.smtp_enabled && emailSent) {
+      await updateJobStatus(supabase, jobId, 'sent');
+      
       return { 
         status: 'success', 
         message: 'Email sent successfully via SMTP',

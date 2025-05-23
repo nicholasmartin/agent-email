@@ -15,6 +15,24 @@ const SuccessIcon = () => (
   </svg>
 );
 
+const BusinessIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.6 2.2H4.4C3.08 2.2 2 3.28 2 4.6V17.6C2 18.92 3.08 20 4.4 20H17.6C18.92 20 20 18.92 20 17.6V4.6C20 3.28 18.92 2.2 17.6 2.2ZM4.4 4.6H9.9V11H4.4V4.6ZM4.4 13.2H9.9V17.6H4.4V13.2ZM17.6 17.6H12.1V11H17.6V17.6ZM17.6 8.8H12.1V4.6H17.6V8.8Z" fill="#3C50E0"/>
+  </svg>
+);
+
+const FreeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19.8 7.7L12.1 2.2C11.44 1.76 10.56 1.76 9.9 2.2L2.2 7.7C1.76 8.03 1.54 8.58 1.54 9.13V19.8C1.54 20.46 2.09 21 2.75 21H19.25C19.91 21 20.46 20.46 20.46 19.8V9.13C20.46 8.58 20.24 8.03 19.8 7.7ZM11 4.05L16.5 7.7L11 11.35L5.5 7.7L11 4.05ZM18.15 18.7H3.85V10.01L11 15.4L18.15 10.01V18.7Z" fill="#10B981"/>
+  </svg>
+);
+
+const OtherIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 0C4.95 0 0 4.95 0 11C0 17.05 4.95 22 11 22C17.05 22 22 17.05 22 11C22 4.95 17.05 0 11 0ZM11 19.8C6.16 19.8 2.2 15.84 2.2 11C2.2 6.16 6.16 2.2 11 2.2C15.84 2.2 19.8 6.16 19.8 11C19.8 15.84 15.84 19.8 11 19.8ZM12.1 5.5H9.9V12.1H16.5V9.9H12.1V5.5Z" fill="#FFA500"/>
+  </svg>
+);
+
 const EmailIcon = () => (
   <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M19.8 0H2.2C0.99 0 0 0.99 0 2.2V17.6C0 18.81 0.99 19.8 2.2 19.8H19.8C21.01 19.8 22 18.81 22 17.6V2.2C22 0.99 21.01 0 19.8 0ZM19.8 2.2V2.42C18.855 3.255 17.446 4.462 13.662 7.524C12.804 8.206 11.044 9.878 11 9.878C10.956 9.878 9.196 8.206 8.338 7.524C4.554 4.462 3.145 3.255 2.2 2.42V2.2H19.8ZM2.2 17.6V5.06C3.167 5.874 4.422 6.894 6.776 8.778C7.876 9.656 9.892 11.55 11 11.528C12.097 11.55 14.08 9.69 15.224 8.778C17.578 6.894 18.833 5.874 19.8 5.06V17.6H2.2Z" fill="#3C50E0" />
@@ -25,7 +43,7 @@ interface StatisticsCardProps {
   title: string;
   value: string;
   description: string;
-  icon: 'chart' | 'success' | 'email';
+  icon: 'chart' | 'success' | 'email' | 'business' | 'free' | 'other';
 }
 
 const StatisticsCard: React.FC<StatisticsCardProps> = ({
@@ -42,6 +60,12 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
         return <SuccessIcon />;
       case 'email':
         return <EmailIcon />;
+      case 'business':
+        return <BusinessIcon />;
+      case 'free':
+        return <FreeIcon />;
+      case 'other':
+        return <OtherIcon />;
       default:
         return <ChartIcon />;
     }

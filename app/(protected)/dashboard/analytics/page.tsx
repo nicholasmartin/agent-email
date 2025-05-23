@@ -32,6 +32,9 @@ const AnalyticsPage = () => {
   const [totalJobs, setTotalJobs] = useState(0);
   const [successRate, setSuccessRate] = useState(0);
   const [emailSentRate, setEmailSentRate] = useState(0);
+  const [businessDomainRate, setBusinessDomainRate] = useState(0);
+  const [freeDomainRate, setFreeDomainRate] = useState(0);
+  const [otherDomainRate, setOtherDomainRate] = useState(0);
   
   // State for job details modal
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -40,6 +43,7 @@ const AnalyticsPage = () => {
   // State for filters
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [domainFilter, setDomainFilter] = useState<string>("");
+  const [domainTypeFilter, setDomainTypeFilter] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   
   // State for pagination
@@ -68,7 +72,7 @@ const AnalyticsPage = () => {
         const { data, error } = await supabase
           .from("jobs")
           .select("*")
-          .eq("metadata->source", "client_api")
+          .eq("metadata->>source", "client_api")
           .gte("created_at", formattedStartDate)
           .lte("created_at", formattedEndDate)
           .order("created_at", { ascending: false });
@@ -87,6 +91,26 @@ const AnalyticsPage = () => {
         // Calculate email sent rate (email_sent = true)
         const sentEmails = data?.filter(job => job.email_sent === true) || [];
         setEmailSentRate(data?.length ? (sentEmails.length / data.length) * 100 : 0);
+        
+        // Calculate domain type statistics
+        const businessDomains = data?.filter(job => {
+          const metadata = job.metadata as any;
+          return metadata?.domain_type === 'business';
+        }) || [];
+        
+        const freeDomains = data?.filter(job => {
+          const metadata = job.metadata as any;
+          return metadata?.domain_type === 'free';
+        }) || [];
+        
+        const otherDomains = data?.filter(job => {
+          const metadata = job.metadata as any;
+          return metadata?.domain_type === 'other' || !metadata?.domain_type;
+        }) || [];
+        
+        setBusinessDomainRate(data?.length ? (businessDomains.length / data.length) * 100 : 0);
+        setFreeDomainRate(data?.length ? (freeDomains.length / data.length) * 100 : 0);
+        setOtherDomainRate(data?.length ? (otherDomains.length / data.length) * 100 : 0);
         
       } catch (err: any) {
         console.error("Error fetching jobs:", err);
@@ -111,6 +135,14 @@ const AnalyticsPage = () => {
     // Apply domain filter
     if (domainFilter) {
       result = result.filter(job => job.domain === domainFilter);
+    }
+    
+    // Apply domain type filter
+    if (domainTypeFilter) {
+      result = result.filter(job => {
+        const metadata = job.metadata as any;
+        return metadata?.domain_type === domainTypeFilter;
+      });
     }
     
     // Apply search query
@@ -202,8 +234,31 @@ const AnalyticsPage = () => {
           />
         </div>
         
+        {/* Domain Type Statistics */}
+        <h3 className="mb-4 text-xl font-semibold text-black dark:text-white">Domain Type Statistics</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 2xl:gap-7.5 mb-6">
+          <StatisticsCard
+            title="Business Domains"
+            value={`${businessDomainRate.toFixed(1)}%`}
+            description="Percentage of business email domains"
+            icon="business"
+          />
+          <StatisticsCard
+            title="Free Email Providers"
+            value={`${freeDomainRate.toFixed(1)}%`}
+            description="Percentage of free email providers (Gmail, etc.)"
+            icon="free"
+          />
+          <StatisticsCard
+            title="Other Domains"
+            value={`${otherDomainRate.toFixed(1)}%`}
+            description="Percentage of other or unknown domain types"
+            icon="other"
+          />
+        </div>
+        
         {/* Filters */}
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           {/* Status Filter */}
           <div>
             <label className="mb-2.5 block text-black dark:text-white">
@@ -239,6 +294,23 @@ const AnalyticsPage = () => {
                   {domain}
                 </option>
               ))}
+            </select>
+          </div>
+          
+          {/* Domain Type Filter */}
+          <div>
+            <label className="mb-2.5 block text-black dark:text-white">
+              Domain Type
+            </label>
+            <select
+              value={domainTypeFilter}
+              onChange={(e) => setDomainTypeFilter(e.target.value)}
+              className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            >
+              <option value="">All Types</option>
+              <option value="business">Business</option>
+              <option value="free">Free</option>
+              <option value="other">Other</option>
             </select>
           </div>
           
