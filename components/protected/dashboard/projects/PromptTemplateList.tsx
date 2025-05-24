@@ -108,8 +108,8 @@ export default function PromptTemplateList({ promptTemplates, companyId }: Promp
                   type="button"
                   onClick={() => handleSetDefault(template.id)}
                   disabled={template.is_default || isSettingDefault !== null}
-                  className={`inline-flex h-9 w-9 items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-meta-4 ${
-                    template.is_default ? "text-warning" : "text-body"
+                  className={`inline-flex h-9 w-9 items-center justify-center rounded border ${template.is_default ? "border-warning" : "border-gray-400"} hover:bg-gray-100 dark:hover:bg-meta-4 ${
+                    template.is_default ? "text-warning" : "text-gray-800 dark:text-body"
                   }`}
                 >
                   {template.is_default ? (
@@ -123,7 +123,7 @@ export default function PromptTemplateList({ promptTemplates, companyId }: Promp
                 <button
                   type="button"
                   onClick={() => setEditingTemplate(template)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded text-body hover:bg-gray-100 hover:text-primary dark:hover:bg-meta-4"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded border border-gray-400 text-gray-800 dark:text-body hover:bg-gray-100 hover:text-blue-600 hover:border-blue-600 dark:hover:bg-meta-4"
                 >
                   <Edit className="h-5 w-5" />
                 </button>
@@ -131,7 +131,7 @@ export default function PromptTemplateList({ promptTemplates, companyId }: Promp
                   type="button"
                   onClick={() => handleDelete(template.id)}
                   disabled={template.is_default || isDeleting !== null}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded text-body hover:bg-gray-100 hover:text-danger dark:hover:bg-meta-4"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded border border-gray-400 text-gray-800 dark:text-body hover:bg-gray-100 hover:text-red-600 hover:border-red-600 dark:hover:bg-meta-4"
                 >
                   {isDeleting === template.id ? (
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent"></div>

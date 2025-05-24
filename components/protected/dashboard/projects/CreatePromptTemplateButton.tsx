@@ -12,7 +12,7 @@ export default function CreatePromptTemplateButton() {
       {!isFormOpen ? (
         <button
           onClick={() => setIsFormOpen(true)}
-          className="inline-flex items-center justify-center gap-2.5 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90"
+          className="inline-flex items-center justify-center gap-2.5 rounded-sm bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 shadow-md border border-blue-700"
         >
           <Plus className="h-5 w-5" />
           New Template

@@ -205,7 +205,7 @@ export default function PromptTemplateForm({ initialData, onSuccess }: PromptTem
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center rounded-sm bg-primary px-6 py-3 text-white hover:bg-opacity-90 disabled:bg-opacity-70"
+          className="inline-flex items-center justify-center rounded-sm bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:bg-blue-500 shadow-md border border-blue-700 font-medium"
         >
           {isSubmitting ? (
             <>
