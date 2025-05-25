@@ -59,7 +59,6 @@ export async function POST(req: NextRequest) {
       .insert({
         first_name: firstName,
         last_name: lastName,
-        full_name: `${firstName} ${lastName}`,
         email: email,
         domain: domain,
         company_id: agentEmailCompany.id,
