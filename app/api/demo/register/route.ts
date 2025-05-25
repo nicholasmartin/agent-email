@@ -13,11 +13,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Parse request body
+    // Parse and validate input
     const body = await req.json();
     const { firstName, lastName, email } = body;
-
-    // Validate input
     if (!firstName || !lastName || !email) {
       return NextResponse.json(
         { error: 'Missing required fields' },
@@ -25,121 +23,64 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Extract domain from email
-    const domain = extractDomainFromEmail(email);
-    
-    // Determine domain type
-    const domainType = getDomainType(email);
-    
-    // Create a job record regardless of domain type
-    const jobMetadata = {
-      source: 'demo',
-      domain_type: domainType
-    };
-    
-    // If not a business domain, create a job with skipped status
-    if (domainType !== 'business') {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
-      
-      // Get or create demo company
-      const { data: demoCompany } = await supabase
-        .from('companies')
-        .select('*')
-        .eq('slug', 'demo')
-        .single();
-      
-      if (!demoCompany) {
-        return NextResponse.json(
-          { error: 'Demo company not found' },
-          { status: 500 }
-        );
-      }
-      
-      const { data: skippedJob, error: skippedError } = await supabase
-        .from('jobs')
-        .insert({
-          first_name: firstName,
-          last_name: lastName,
-          full_name: `${firstName} ${lastName}`,
-          email: email,
-          domain: domain,
-          company_id: demoCompany.id,
-          status: 'skipped',
-          error_message: `${domainType} email domain`,
-          metadata: jobMetadata,
-          from_website: true
-        })
-        .select()
-        .single();
-      
-      if (skippedError) {
-        console.error('Error creating skipped job:', skippedError);
-        return NextResponse.json(
-          { error: 'Failed to create job record' },
-          { status: 500 }
-        );
-      }
-      
-      return NextResponse.json(
-        { error: 'Please use a business email address' },
-        { status: 400 }
-      );
-    }
-
-    // Domain already extracted above
-
-    // Initialize Supabase client
+    // Initialize Supabase client ONCE
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // Get demo company (first active company)
-    const { data: demoCompany } = await supabase
+    // Get agent-email company ONCE
+    const { data: agentEmailCompany } = await supabase
       .from('companies')
-      .select('id')
-      .eq('active', true)
-      .order('created_at', { ascending: true })
-      .limit(1)
+      .select('*')
+      .eq('slug', 'agent-email')
       .single();
 
-    if (!demoCompany) {
+    if (!agentEmailCompany) {
       return NextResponse.json(
-        { error: 'Demo company not found' },
+        { error: 'Agent Email company not found' },
         { status: 500 }
       );
     }
 
-    // Create a new job
-    const { data: job, error } = await supabase
+    // Extract domain and determine type
+    const domain = extractDomainFromEmail(email);
+    const domainType = getDomainType(email);
+    
+    // Create job metadata
+    const jobMetadata = {
+      source: 'demo',
+      domain_type: domainType
+    };
+
+    // Create job with appropriate status
+    const { data: job, error: jobError } = await supabase
       .from('jobs')
       .insert({
         first_name: firstName,
         last_name: lastName,
+        full_name: `${firstName} ${lastName}`,
         email: email,
         domain: domain,
-        company_id: demoCompany.id,
-        status: 'pending',
-        metadata: {
-          ...jobMetadata
-        }
+        company_id: agentEmailCompany.id,
+        status: domainType === 'business' ? 'pending' : 'skipped',
+        error_message: domainType !== 'business' ? `${domainType} email domain` : undefined,
+        metadata: jobMetadata,
+        from_website: true
       })
       .select()
       .single();
 
-    if (error) {
-      console.error('Error creating job:', error);
+    if (jobError) {
+      console.error('Error creating job:', jobError);
       return NextResponse.json(
-        { error: 'Failed to create job' },
+        { error: 'Failed to create job record' },
         { status: 500 }
       );
     }
 
-    // Create a trial record
-    await supabase
+    // Create trial record for ALL webform submissions
+    const { error: trialError } = await supabase
       .from('trials')
       .insert({
         first_name: firstName,
@@ -148,10 +89,24 @@ export async function POST(req: NextRequest) {
         job_id: job.id
       });
 
+    if (trialError) {
+      console.error('Error creating trial record:', trialError);
+      // Note: We don't return here as the job was created successfully
+    }
+
+    // Return appropriate response based on domain type
+    if (domainType !== 'business') {
+      return NextResponse.json(
+        { error: 'Please use a business email address' },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json({
       message: 'Demo registration successful',
       jobId: job.id
     });
+
   } catch (error: any) {
     console.error('Error in demo registration:', error);
     return NextResponse.json(
