@@ -159,7 +159,7 @@ export function Hero() {
                 The AI Personalized Email <span className="font-extrabold">Specialist</span> for B2B & SaaS Companies
               </h1>
               <p className="text-xl text-gray-300 max-w-lg">
-                Let Agent Email research your leads and send them personalized emails that feel hand-crafted. Submit your business email below to try it out!              </p>
+                Let Agent Email research your leads and send them personalized emails that feel hand-crafted. Submit your business email below to see how it works! Free email adresses like gmail do not work.              </p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-5 bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">

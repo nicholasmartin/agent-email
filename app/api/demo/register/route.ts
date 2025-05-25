@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     // Return appropriate response based on domain type
     if (domainType !== 'business') {
       return NextResponse.json(
-        { error: 'Please use a business email address' },
+        { error: 'Please try again with your business email address. This service is only available for business email addresses.' },
         { status: 400 }
       );
     }
