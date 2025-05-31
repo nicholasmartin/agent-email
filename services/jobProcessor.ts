@@ -166,16 +166,8 @@ export async function processJob(jobId: string) {
     // 5. Mark job as completed
     await updateJobStatus(supabase, jobId, 'completed');
     
-    // Release the lock before returning
-    try {
-      await supabase
-        .from('jobs')
-        .update({ processing_lock: null })
-        .eq('id', jobId);
-      console.log(`Released lock for job ${jobId} after successful processing`);
-    } catch (lockError) {
-      console.error(`Failed to release lock for job ${jobId}:`, lockError);
-    }
+    // Release the lock before returning with retry mechanism
+    await releaseJobLock(supabase, jobId, 'successful processing');
     
     return { 
       status: 'success', 
@@ -191,19 +183,46 @@ export async function processJob(jobId: string) {
     console.error(`Error processing job ${jobId}:`, error);
     await updateJobStatus(supabase, jobId, 'failed', error.message);
     
-    // Release the lock even if there's an error
-    try {
-      await supabase
-        .from('jobs')
-        .update({ processing_lock: null })
-        .eq('id', jobId);
-      console.log(`Released lock for job ${jobId} after error`);
-    } catch (lockError) {
-      console.error(`Failed to release lock for job ${jobId}:`, lockError);
-    }
+    // Release the lock even if there's an error with retry mechanism
+    await releaseJobLock(supabase, jobId, 'error');
     
     return { status: 'error', message: error.message };
   }
+}
+
+/**
+ * Helper function to release a job lock with retry mechanism
+ * Will attempt to release the lock up to 3 times with increasing delays
+ */
+async function releaseJobLock(supabase: any, jobId: string, context: string) {
+  const maxRetries = 3;
+  let retryCount = 0;
+  
+  while (retryCount < maxRetries) {
+    try {
+      const { error } = await supabase
+        .from('jobs')
+        .update({ processing_lock: null })
+        .eq('id', jobId);
+      
+      if (!error) {
+        console.log(`Released lock for job ${jobId} after ${context}`);
+        return true;
+      }
+      
+      console.warn(`Attempt ${retryCount + 1} failed to release lock for job ${jobId}: ${error.message}`);
+    } catch (lockError: any) {
+      console.error(`Attempt ${retryCount + 1} failed to release lock for job ${jobId}:`, lockError);
+    }
+    
+    // Exponential backoff: 200ms, 400ms, 800ms
+    const delay = 200 * Math.pow(2, retryCount);
+    await new Promise(resolve => setTimeout(resolve, delay));
+    retryCount++;
+  }
+  
+  console.error(`Failed to release lock for job ${jobId} after ${maxRetries} attempts`);
+  return false;
 }
 
 async function updateJobStatus(supabase: any, jobId: string, status: string, errorMessage?: string) {
