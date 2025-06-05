@@ -1,7 +1,5 @@
-const freeDomains = [
-  'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
-  'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com'
-];
+// Import the free email domains from separate file
+import freeDomains from './free_email_domains.js';
 
 export type DomainType = 'business' | 'free' | 'other';
 
