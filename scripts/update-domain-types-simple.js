@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 
+// Import the free email domains from separate file
+import freeDomains from '../utils/free_email_domains.js';
+
 // Simple script to update domain types in existing jobs
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: '.env.local' });
-
-// List of free email domains
-const freeDomains = [
-  'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
-  'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com'
-];
 
 // Function to determine domain type
 function getDomainType(email) {
