@@ -4,6 +4,8 @@ import { getPromptTemplates } from "@/app/actions/promptTemplates";
 import PromptTemplateList from "@/components/protected/dashboard/projects/PromptTemplateList";
 import CreatePromptTemplateButton from "@/components/protected/dashboard/projects/CreatePromptTemplateButton";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Projects | Agent Email",
   description: "Manage your prompt templates for personalized email generation",

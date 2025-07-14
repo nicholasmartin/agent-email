@@ -2,6 +2,8 @@ import React from 'react';
 import CompanyForm from '@/components/protected/dashboard/settings/CompanyForm';
 import { getCompanyData, updateCompanyAction } from '@/app/actions/company';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AccountSettingsPage() {
   // Fetch the company data
   const { company, error } = await getCompanyData();
