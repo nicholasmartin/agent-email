@@ -47,3 +47,4 @@ next-env.d.ts
 
 # taskmaster-ai
 .taskmasterconfig
+backups/agent-email.backup.gz
